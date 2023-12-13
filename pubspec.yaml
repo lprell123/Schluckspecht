@@ -34,6 +34,7 @@ dependencies:
   provider: ^6.0.0
   google_fonts: ^6.1.0
   cupertino_icons: ^1.0.2
+  timeline_tile: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -61,7 +62,9 @@ flutter:
   assets:
     - assets/posts.json
     - assets/images/
-   
+    - assets/Fleig.jpg
+    - assets/Hensel.jpg
+    - assets/HO_Logo_Quer_RGB_pos.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
