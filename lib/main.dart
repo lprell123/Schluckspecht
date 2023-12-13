@@ -1,9 +1,12 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:schluckspecht_app/Feed.dart';
 import 'themes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'navbar.dart';
 import 'Contact.dart';
+
 
 // Hex Color function
 class HexColor extends Color {
@@ -25,7 +28,7 @@ void main() {
 
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +37,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Namer App',
         theme: ThemeData(
+          scaffoldBackgroundColor: Colors.grey[200], // Hier die Hintergrundfarbe setzen
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(
             seedColor: lightPrimaryColor,
