@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'themes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'navbar.dart';
+import 'Contact.dart';
 
 // Hex Color function
 class HexColor extends Color {
