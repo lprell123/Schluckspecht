@@ -2,8 +2,22 @@ import "package:flutter/material.dart";
 
 
 class EventCard extends StatelessWidget {
-  final child;
-  const EventCard({super.key, required this.child});
+  String? country;
+  String? eventName;
+  int? year;
+
+  String? placement;
+  String? title;
+  String? tags;
+
+  String? content;
+  String? imagePath;
+  
+
+
+  EventCard(this.country, this.eventName, this.year, this.placement, this.title, this.tags, this.content, this.imagePath,{
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,49 +33,47 @@ class EventCard extends StatelessWidget {
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          //LEFT SIDE
+          //LEFT SIDE : TEXT
           Expanded ( 
             flex:2,
             child : Container(
               padding: const EdgeInsets.all(10),
-              child: const Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
                   //LAND TURNIER JAHR
-                  Text(
-                    "Frankreich Turnier Cup 2018",
-                    style: const TextStyle(color: Colors.grey, fontSize: 6)
-                  ),
+                  Text("$country $eventName $year", style: const TextStyle(color: Colors.grey, fontSize: 10,) ),
 
-                  //PLATZIERUNG
-                  Text(
-                    "3. Platz",
+                  //PLATZIERUNG TURNIER
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("$placement", style: const TextStyle(fontSize: 19,)),
+                      Text("$title"),
+                    ],
                   ),
-
-                  //
-                  Text(
-                    "im Bereich autonomes Fahren",
-                  ),
-
-                  Text(
-                    "#hs_offenburg",
-                    style: const TextStyle(color: Colors.grey, fontSize: 6, backgroundColor: Color.fromARGB(255, 243, 243, 243),) 
-                  ),
-                ],
+                  
+                  //TAGS
+                  Text("$tags", style: const TextStyle(color: Colors.grey, fontSize: 10, backgroundColor: Color.fromARGB(255, 243, 243, 243),) ),
+                ]
               ),
             ),
           ),
 
-          //RIGHT SIDE
-          Expanded( 
-            flex :3,
-            child: Container(
-              decoration: BoxDecoration(color: const Color.fromARGB(255, 102, 9, 3),),
-              
+          //RIGHT SIDE : PICTURE
+          if (imagePath != null)
+            Expanded(
+              flex: 3,
+              child: ClipRect(
+                child: Image.asset(
+                  imagePath!,
+                  fit: BoxFit.fitHeight,
+                ),
+              ),
             ),
-          )
         ],
       ),
     );
