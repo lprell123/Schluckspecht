@@ -31,13 +31,13 @@ class MyTimelineTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 200,
+      height: 250,
       child: TimelineTile(
         isFirst: isFirst,
         isLast: isLast,  
 
         alignment: TimelineAlign.manual,
-        lineXY: 0.20,
+        lineXY: 0.16,
         
         //DECORATIONS
         beforeLineStyle: LineStyle(color: Color.fromARGB(255, 121, 121, 121), thickness: 2),

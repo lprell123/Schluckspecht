@@ -16,7 +16,7 @@ class Historypage extends StatelessWidget {
       backgroundColor: Color.fromARGB(255, 247, 247, 247),
       appBar: AppBar(title: Text("History"),),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: FutureBuilder(
           future: ReadJsonData(),
           builder: (context, data) {
