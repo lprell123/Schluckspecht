@@ -1,20 +1,22 @@
 import "package:flutter/material.dart";
 
 class DateCard extends StatelessWidget {
-  final year;
-  final dayMonth;
-  const DateCard({super.key, required this.year, required this.dayMonth});
+  int? day;
+  int? month;
+  int? year;
+
+  DateCard(this.day, this.month, this.year);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.all(15),
-      child: const Column(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text("2019"),
-          Text("27/08"),
+          Text("$year"),
+          Text("$day / $month"),
         ],
       ),
     );

@@ -2,8 +2,22 @@ import "package:flutter/material.dart";
 
 
 class EventCard extends StatelessWidget {
-  final child;
-  const EventCard({super.key, required this.child});
+  String? country;
+  String? eventName;
+  int? year;
+
+  String? placement;
+  String? title;
+  String? tags;
+
+  String? content;
+  String? imagePath;
+  
+
+
+  EventCard(this.country, this.eventName, this.year, this.placement, this.title, this.tags, this.content, this.imagePath,{
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,43 +39,32 @@ class EventCard extends StatelessWidget {
             flex:2,
             child : Container(
               padding: const EdgeInsets.all(10),
-              child: const Column(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
+                children: [
                   //LAND TURNIER JAHR
-                  Text(
-                    "Frankreich Turnier Cup 2018",
-                    style: const TextStyle(color: Colors.grey, fontSize: 6)
-                  ),
-
-                  //PLATZIERUNG
-                  Text(
-                    "3. Platz",
-                  ),
-
-                  //
-                  Text(
-                    "im Bereich autonomes Fahren",
-                  ),
-
-                  Text(
-                    "#hs_offenburg",
-                    style: const TextStyle(color: Colors.grey, fontSize: 6, backgroundColor: Color.fromARGB(255, 243, 243, 243),) 
-                  ),
-                ],
+                  Text("$country $eventName $year", style: const TextStyle(color: Colors.grey, fontSize: 6,) ),
+                  Text("$placement"),
+                  Text("$eventName"),
+                  Text("$tags", style: const TextStyle(color: Colors.grey, fontSize: 6, backgroundColor: Color.fromARGB(255, 243, 243, 243),) ),
+                ]
               ),
             ),
           ),
 
           //RIGHT SIDE
-          Expanded( 
-            flex :3,
-            child: Container(
-              decoration: BoxDecoration(color: const Color.fromARGB(255, 102, 9, 3),),
-              
+          if (imagePath != null)
+            Expanded(
+              flex: 3,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: Image.asset(
+                  imagePath!,
+                  fit: BoxFit.fitHeight,
+                ),
+              ),
             ),
-          )
         ],
       ),
     );
