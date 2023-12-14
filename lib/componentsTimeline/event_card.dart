@@ -35,7 +35,7 @@ class EventCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          //LEFT SIDE
+          //LEFT SIDE : TEXT
           Expanded ( 
             flex:2,
             child : Container(
@@ -46,26 +46,28 @@ class EventCard extends StatelessWidget {
                 children: [
                   //LAND TURNIER JAHR
                   Text("$country $eventName $year", style: const TextStyle(color: Colors.grey, fontSize: 10,) ),
+
+                  //PLATZIERUNG TURNIER
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text("$placement", style: const TextStyle(fontSize: 19,)),
-                      Text("$eventName"),
+                      Text("$title"),
                     ],
                   ),
                   
+                  //TAGS
                   Text("$tags", style: const TextStyle(color: Colors.grey, fontSize: 10, backgroundColor: Color.fromARGB(255, 243, 243, 243),) ),
                 ]
               ),
             ),
           ),
 
-          //RIGHT SIDE
+          //RIGHT SIDE : PICTURE
           if (imagePath != null)
             Expanded(
               flex: 3,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
+              child: ClipRect(
                 child: Image.asset(
                   imagePath!,
                   fit: BoxFit.fitHeight,

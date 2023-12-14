@@ -28,19 +28,29 @@ class Historypage extends StatelessWidget {
               return ListView.builder(
                 itemCount: items.length,
                 itemBuilder: (context, index) {
-                  return MyTimelineTile(
-                    items[index].id, 
-                    items[index].day,
-                    items[index].month, 
-                    items[index].year, 
-                    items[index].country, 
-                    items[index].eventName, 
-                    items[index].placement, 
-                    items[index].title, 
-                    items[index].tags, 
-                    items[index].content, 
-                    items[index].imagePath,
+                  return InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (BuildContext context) {
+                          return FullText(event: items[index]);
+                        },
+                      ));
+                    },
+                    child: MyTimelineTile(
+                      items[index].id, 
+                      items[index].day,
+                      items[index].month, 
+                      items[index].year, 
+                      items[index].country, 
+                      items[index].eventName, 
+                      items[index].placement, 
+                      items[index].title, 
+                      items[index].tags, 
+                      items[index].content, 
+                      items[index].imagePath,
+                    ),
                   );
+                  
                 },
               );
             }
@@ -113,6 +123,98 @@ class Events{
 
     content=json['content'];
     imagePath=json['imagePath'];
+  }
+}
+
+class FullText extends StatelessWidget {
+  final Events event;
+
+  int? day;
+  int? month;
+  int? year;
+
+  FullText({
+    required this.event,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    day = event.day;
+    month = event.month;
+    year = event.year;
+
+    return Scaffold(
+      appBar: AppBar(),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+
+                  //DATUM
+                  Text(
+                    "$day / $month / $year",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
+
+              //HEADING
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  //PLATZIERUNG
+                  Text(
+                    event.placement ?? "",
+                    style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    overflow: TextOverflow.visible,
+                  ),
+
+                  //TITEL
+                  Text(
+                    event.title ?? "",
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 131, 131, 131),
+                    ),
+                    overflow: TextOverflow.visible,
+                  ),
+                ],
+              ),
+
+
+              const SizedBox(height: 16),
+              if (event.imagePath != null)
+                AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: Image.asset(
+                    event.imagePath!,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 24.0),
+                child: Text(
+                  event.content ?? "",
+                  style: TextStyle(fontSize: 18),
+                  overflow: TextOverflow.visible,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 
