@@ -87,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return LayoutBuilder(builder: (context, constraints) {
         if (constraints.maxWidth >= 750) {
           return const DesktopNavbar();
-        } else if (constraints.maxWidth >= 400) {
+        } else if (constraints.maxWidth >= 600) {
           return const TabletNavbar();
         } else {
           return const MobileNavbar();
