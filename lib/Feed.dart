@@ -102,23 +102,12 @@ class Feedpage extends StatelessWidget {
   }
 }
 
-
-
-
-
-
-
-
-
-
 Future<List<Posts>>ReadJsonData() async{
   final jsondata = await rootBundle.rootBundle.loadString('assets/posts.json');
   final list = json.decode(jsondata) as List<dynamic>;
 
   return list.map((e) => Posts.fromJson(e)).toList();
 }
-
-
 
 class Posts{
   int? id;
