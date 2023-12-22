@@ -30,6 +30,7 @@ dependencies:
   flutter:
     sdk: flutter
 
+  http: ^1.1.0
   english_words: ^4.0.0
   provider: ^6.0.0
   google_fonts: ^6.1.0
@@ -66,7 +67,10 @@ flutter:
     - assets/images/
     - assets/Fleig.jpg
     - assets/Hensel.jpg
-    - assets/HO_Logo_Quer_RGB_pos.png
+    - assets/HOLogo.png
+    - assets/Schluckspecht_Logo2.png
+    - assets/logo1.png
+    - assets/appbarheaderimage.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

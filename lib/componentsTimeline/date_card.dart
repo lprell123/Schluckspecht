@@ -5,7 +5,7 @@ class DateCard extends StatelessWidget {
   int? month;
   int? year;
 
-  DateCard(this.day, this.month, this.year);
+  DateCard(this.day, this.month, this.year, {super.key});
 
   @override
   Widget build(BuildContext context) {

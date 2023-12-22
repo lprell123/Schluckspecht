@@ -1,23 +1,24 @@
 import 'dart:convert';
-
-import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-import 'main.dart';
 import 'package:flutter/services.dart' as rootBundle;
+import 'package:schluckspecht_app/AppThemes.dart';
+import 'package:http/http.dart' as http;
+
+import 'mycustomappbar.dart';
 
 class Feedpage extends StatelessWidget {
+  Feedpage({super.key});
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-    var statevalue = appState.selectedpage;
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Feed'),
-      ),
+      appBar: MyAppBar(title: 'Feed', scaffoldKey: scaffoldKey),
+      drawer: MyDrawer(),
+      backgroundColor: Colors.grey[100],
       body: FutureBuilder(
-        future: ReadJsonData(),
+        future: readApiData(),
         builder: (context, data) {
           if (data.hasError) {
             return Center(child: Text("${data.error}"));
@@ -27,74 +28,107 @@ class Feedpage extends StatelessWidget {
               itemCount: items.length,
               itemBuilder: (context, index) {
                 return Card(
+                  margin: const EdgeInsets.all(20.0),
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  color: Colors.white,
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      const Padding(
+                        padding: EdgeInsets.all(15.0),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              // Replace with your user's profile image
+                              backgroundImage: AssetImage('assets/Fleig.jpg'),
+                              radius: 20.0,
+                            ),
+                            SizedBox(width: 8.0),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Unser Team', // Replace with user's name
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  '10.12.2023', // Replace with the actual post date
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 8, right: 8, top: 8),
+                        padding: const EdgeInsets.all(15.0),
                         child: Text(
                           items[index].title.toString(),
                           style: const TextStyle(
-                            fontSize: 16,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
-                      if (items[index].content != null)
-                        Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                items[index].content.toString(),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 8,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                              InkWell(
-                                onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (BuildContext context) {
-                                      return SecondPage(post: items[index]);
-                                    },
-                                  ));
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 8),
-                                  child: Text(
-                                    'Weiterlesen',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
                       if (items[index].imagePath != null)
                         AspectRatio(
-                          aspectRatio: 3 / 2, // Seitenverhältnis etwa 2/3
+                          aspectRatio: 16 / 9,
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8.0),
+                            borderRadius: BorderRadius.circular(5),
                             child: Image.asset(
                               items[index].imagePath!,
                               fit: BoxFit.cover,
                             ),
                           ),
                         ),
+                      if (items[index].content != null)
+                        Padding(
+                          padding: const EdgeInsets.all(15),
+                          child: Text(
+                            items[index].content.toString(),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.normal,
+                            ),
+                            maxLines: 4,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (BuildContext context) {
+                              return SecondPage(post: items[index]);
+                            },
+                          ));
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: Text(
+                            'Weiterlesen',
+                            style: TextStyle(
+                              color: AppColors.Primaryblue,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 );
               },
             );
           } else {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
         },
       ),
@@ -109,13 +143,31 @@ Future<List<Posts>>ReadJsonData() async{
   return list.map((e) => Posts.fromJson(e)).toList();
 }
 
+Future<List<Posts>> readApiData() async {
+  try {
+    final response = await http.get(
+      Uri.parse('http://localhost:8080/Feedposts'),
+      headers: {'Accept': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> list = json.decode(response.body);
+      return list.map((e) => Posts.fromJson(e)).toList();
+    } else {
+      throw Exception('Failed to load data');
+    }
+  } catch (error) {
+    print('Error: $error');
+    throw error;
+  }
+}
+
 class Posts{
   int? id;
   String? title;
   String? content;
   String? date;
   String? imagePath;
-  
 
   Posts(
     {
@@ -136,16 +188,13 @@ class Posts{
     imagePath=json['imagePath'];
     
   }
-
-
-
 }
 
 
 class SecondPage extends StatelessWidget {
   final Posts post;
 
-  SecondPage({required this.post});
+  const SecondPage({super.key, required this.post});
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +206,7 @@ class SecondPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -165,7 +214,7 @@ class SecondPage extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
                       post.date ?? "",
-                      style: TextStyle(fontSize: 16),
+                      style: const TextStyle(fontSize: 16),
                     ),
                   ),
                 ],
@@ -190,7 +239,7 @@ class SecondPage extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 post.content ?? "",
-                style: TextStyle(fontSize: 18),
+                style: const TextStyle(fontSize: 18),
                 overflow: TextOverflow.visible,
               ),
             ],

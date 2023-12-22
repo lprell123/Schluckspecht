@@ -1,24 +1,26 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 import "package:schluckspecht_app/componentsTimeline/my_timeline_tile.dart";
-import 'package:schluckspecht_app/main.dart';
 import 'package:flutter/services.dart' as rootBundle;
+import 'package:schluckspecht_app/mycustomappbar.dart';
+import 'package:http/http.dart' as http;
+
 
 class Historypage extends StatelessWidget {
+  Historypage({super.key});
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-    var statevalue = appState.selectedpage;
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 247, 247, 247),
-      appBar: AppBar(title: Text("History"),),
+      backgroundColor: const Color.fromARGB(255, 247, 247, 247),
+      appBar: MyAppBar(title: 'Historie', scaffoldKey: scaffoldKey),
+      drawer: MyDrawer(),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: FutureBuilder(
-          future: ReadJsonData(),
+          future: fetchEventsFromApi(),
           builder: (context, data) {
             if(data.hasError) {
               return Center(child: Text("${data.error}"));
@@ -55,7 +57,7 @@ class Historypage extends StatelessWidget {
               );
             }
             else {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             }
           },
         ),
@@ -70,6 +72,17 @@ Future<List<Events>>ReadJsonData() async{
   final list = json.decode(jsondata) as List<dynamic>;
 
   return list.map((e) => Events.fromJson(e)).toList();
+}
+
+Future<List<Events>> fetchEventsFromApi() async {
+  final response = await http.get(Uri.parse('http://localhost:8080/Timelineposts'));
+
+  if (response.statusCode == 200) {
+    final List<dynamic> list = json.decode(response.body);
+    return list.map((e) => Events.fromJson(e)).toList();
+  } else {
+    throw Exception('Failed to load events');
+  }
 }
 
 class Events{
@@ -133,7 +146,7 @@ class FullText extends StatelessWidget {
   int? month;
   int? year;
 
-  FullText({
+  FullText({super.key,
     required this.event,
   });
 
@@ -151,7 +164,7 @@ class FullText extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -159,11 +172,10 @@ class FullText extends StatelessWidget {
                   //DATUM
                   Text(
                     "$day / $month / $year",
-                    style: TextStyle(fontSize: 16),
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ],
               ),
-
               //HEADING
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -191,7 +203,6 @@ class FullText extends StatelessWidget {
                 ],
               ),
 
-
               const SizedBox(height: 16),
               if (event.imagePath != null)
                 AspectRatio(
@@ -206,7 +217,7 @@ class FullText extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 24.0),
                 child: Text(
                   event.content ?? "",
-                  style: TextStyle(fontSize: 18),
+                  style: const TextStyle(fontSize: 18),
                   overflow: TextOverflow.visible,
                 ),
               ),
