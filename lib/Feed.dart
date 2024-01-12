@@ -102,7 +102,14 @@ class Feedpage extends StatelessWidget {
   }
 }
 
-
+Future<List<Posts>> fetchData() async {
+  try {
+    return await fetchEventsFromApi();
+  } catch (e) {
+    print('API request failed. Trying to load local data...');
+    return readLocalJson();
+  }
+}
 
 
 
@@ -118,7 +125,20 @@ Future<List<Posts>>ReadJsonData() async{
   return list.map((e) => Posts.fromJson(e)).toList();
 }
 
+<<<<<<< Updated upstream
 
+=======
+Future<List<Posts>> fetchEventsFromApi() async {
+  final response = await http.get(Uri.parse('http://localhost:8080/Feedposts'));
+
+  if (response.statusCode == 200) {
+    final List<dynamic> list = json.decode(response.body);
+    return list.map((e) => Posts.fromJson(e)).toList();
+  } else {
+    throw Exception('Failed to load events');
+  }
+}
+>>>>>>> Stashed changes
 
 class Posts{
   int? id;
