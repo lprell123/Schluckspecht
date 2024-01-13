@@ -7,6 +7,8 @@ import 'AppThemes.dart';
 import 'mycustomappbar.dart';
 
 
+
+
 class Contactpage extends StatelessWidget {
   Contactpage({super.key});
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -14,68 +16,108 @@ class Contactpage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(title: 'Kontakt', scaffoldKey: scaffoldKey),
-      drawer: MyDrawer(),
-      body: Container(
-        color: Colors.grey[100],
-        child: buildContactList(),
+      appBar: AppBar(
+        title: Text('Kontakt'),
       ),
-    );
-  }
-
-  Widget buildContactList() {
-    return FutureBuilder<List<Map<String, dynamic>>>(
-      future: fetchContactsFromApi(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text("Error: ${snapshot.error}"));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(child: Text("No data available"));
-        } else {
-          List<Map<String, dynamic>> contacts = snapshot.data!;
-          return SingleChildScrollView(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: contacts.map((contact) {
-                  return Column(
-                    children: [
-                      buildContactCard(contact),
-                      const SizedBox(height: 5),
-                    ],
-                  );
-                }).toList(),
-              ),
-            ),
-          );
-        }
-      },
+      body: FutureBuilder<List<Contact>>(
+        future: fetchData(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(child: Text("Error: ${snapshot.error}"));
+          } else if (snapshot.hasData) {
+            var items = snapshot.data!;
+            return ListView.builder(
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                return Container(
+                 margin: AppCardStyle.innerPadding,
+                  child: buildContactCard(context, items[index]),
+                   );
+                return buildContactCard(context, items[index]);
+              },
+            );
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
     );
   }
 }
 
+Widget buildContactCard(BuildContext context, Contact contact) {
+  return Card(
+    color: AppColors.cardColor,
+    elevation: 0, // Erhöhe den elevation-Wert für einen weicheren Schatten
+    margin: AppCardStyle.cardMargin, // Beispielhafter Rand um die Karte
+    shape: RoundedRectangleBorder(
+      borderRadius: AppCardStyle.cardBorderRadius // Beispielhafter Wert für die abgerundeten Ecken
+    ),
+    child: Padding(
+     
+      padding: AppCardStyle.innerPadding,
+      child: Column(
+        children: [
+          buildAvatar(contact.imagePath ?? ''),
+          const SizedBox(height: 10),
+          buildContactName(contact.name ?? ''),
+          const SizedBox(height: 5),
+          buildContactDetails(
+            contact.position ?? '',
+            contact.phonenumber ?? '',
+            contact.email ?? '',
+          ),
+          const SizedBox(height: 10),
+          buildTextField('Name'),
+          const SizedBox(height: 10),
+          buildTextField('Betreff'),
+          const SizedBox(height: 10),
+          buildTextField('Ihre Nachricht'),
+          const SizedBox(height: 10),
+          buildElevatedButton(),
+          const SizedBox(height: 10,)
+       ],
+      ),
+    ),
+  );
+}
+      
+    
+  
+
+  
+
+Future<List<Contact>> fetchData() async {
+  try {
+    return await fetchContactsFromApi();
+  } catch (e) {
+    print('API request failed. Trying to load local data...');
+    return readLocalJson();
+  }
+}
 
 
-
-Future<List<Map<String, dynamic>>> fetchContactsFromApi() async {
+Future<List<Contact>> fetchContactsFromApi() async {
     final response = await http.get(
       Uri.parse('http://localhost:8080/Contactforms'),
     );
 
     if (response.statusCode == 200) {
-      final List<dynamic> list = json.decode(response.body);
-
-      List<Map<String, dynamic>> contacts = list
-          .map((item) => Map<String, dynamic>.from(item as Map<String, dynamic>))
-          .toList();
-
-      return contacts;
-    } else {
-      throw Exception('Failed to load contacts');
-    }
+    final List<dynamic> list = json.decode(response.body);
+    return list.map((e) => Contact.fromJson(e)).toList();
+  } else {
+    throw Exception('Failed to load events');
   }
+  }
+
+  
+Future<List<Contact>>readLocalJson() async{
+  final jsondata = await rootBundle.rootBundle.loadString('assets/localData/Feed/posts.json');
+  final list = json.decode(jsondata) as List<dynamic>;
+
+  return list.map((e) => Contact.fromJson(e)).toList();
+}
+
 
  
 
@@ -113,44 +155,6 @@ class Contact{
   
 
 
-  Widget buildContactCard(Map<String, dynamic> contact) {
-  return Card(
-    color: AppColors.cardColor,
-    elevation: 0, // Erhöhe den elevation-Wert für einen weicheren Schatten
-    margin: AppCardStyle.cardMargin, // Beispielhafter Rand um die Karte
-    shape: RoundedRectangleBorder(
-      borderRadius: AppCardStyle.cardBorderRadius // Beispielhafter Wert für die abgerundeten Ecken
-    ),
-    child: Padding(
-     
-      padding: AppCardStyle.innerPadding,
-      child: Column(
-        children: [
-          buildAvatar(contact['imagePath'] ?? ''),
-          const SizedBox(height: 10),
-          buildContactName(contact['name'] ?? ''),
-          const SizedBox(height: 5),
-          buildContactDetails(
-            contact['position'] ?? '',
-            contact['phone'] ?? '',
-            contact['email'] ?? '',
-          ),
-          const SizedBox(height: 10),
-          buildTextField('Name'),
-          const SizedBox(height: 10),
-          buildTextField('Betreff'),
-          const SizedBox(height: 10),
-          buildTextField('Ihre Nachricht'),
-          const SizedBox(height: 10),
-          buildElevatedButton(),
-          const SizedBox(height: 10,)
-       ],
-      ),
-    ),
-  );
-}
-
-
   Widget buildAvatar(String imagePath) {
     return Stack(
       alignment: Alignment.topCenter,
@@ -183,9 +187,9 @@ class Contact{
     );
   }
 
-  Widget buildContactDetails(String position, String phone, String email) {
+  Widget buildContactDetails(String position, String phonenumber, String email) {
     return Text(
-      '$position \n $phone \n $email',
+      '$position \n $phonenumber \n $email',
       textAlign: TextAlign.center,
       style: const TextStyle(
         fontSize: AppTextStyle.smallFontSize,

@@ -5,8 +5,8 @@ class AppColors {
   static Color secondaryBlue = Color(0xFF00C2C9);
   static Color primaryRed = Color(0xFFFC0404);
   static Color secondaryGrey = Color(0xFFEEEEEE)!;
-  static Color? backgroundColor = Color(0xFFF5F5F5);
-  static Color cardColor = Color(0xFFFFFFFF);
+  static Color? backgroundColor = Color.fromARGB(255, 255, 255, 255);
+  static Color cardColor = Color.fromARGB(255, 245, 244, 244);
   static const Color primaryFontColor = Color(0xFF000000);
   static const Color secondaryFontColor = Color(0xFF9E9E9E);
 }

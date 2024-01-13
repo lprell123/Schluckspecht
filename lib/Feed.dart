@@ -46,6 +46,7 @@ class Feedpage extends StatelessWidget {
 
   Widget buildPostCard(BuildContext context, Posts post) {
     return Card(
+      color: AppColors.cardColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
