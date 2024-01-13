@@ -4,7 +4,6 @@ import 'package:schluckspecht_app/Feed.dart';
 import 'package:schluckspecht_app/History.dart';
 import 'package:schluckspecht_app/themes.dart';
 
-int globalpageindex =0;
 
 const icononeunselected = Icon(Icons.contact_page_outlined);
 const icononeselected = Icon(Icons.contact_page_rounded);
@@ -29,7 +28,7 @@ class MobileNavbar extends StatefulWidget {
 
 class _MobileNavbarState extends State<MobileNavbar> {
 
-  var currentpageindex = globalpageindex;
+  var currentpageindex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -37,10 +36,10 @@ class _MobileNavbarState extends State<MobileNavbar> {
     Widget page;
     switch (currentpageindex) {
       case 0:
-        page = Feedpage();
+        page = Contactpage();
         break;
       case 1:
-        page = Contactpage();
+        page = Feedpage();
         break;
       case 2:
         page = Historypage();
@@ -50,46 +49,40 @@ class _MobileNavbarState extends State<MobileNavbar> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.background,
-        title: const Text('Schluckspecht'),
-      ),
       body: Center(
         child: page,
       ),
-      bottomNavigationBar: NavigationBarTheme(
-      data: NavigationBarThemeData(
-        indicatorColor: accentColor.withOpacity(0.6),
-      ),
-      child: NavigationBar(
-        backgroundColor: Colors.grey[100],
-        labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-        height: 70,
-        selectedIndex: currentpageindex,
-
-        onDestinationSelected: (int index) {
-          setState(() {
-            currentpageindex = index;
-          });
-        },
-        destinations: const <NavigationDestination>[
-          NavigationDestination(
-            selectedIcon: icononeselected,
-            icon: icononeunselected,
-            label: icononelabel,
-          ),
-          NavigationDestination(
-            selectedIcon: icontwoselected,
-            icon: icontwounselected,
-            label: icontwolabel,
-          ),
-          NavigationDestination(
-            selectedIcon: iconthreeselected,
-            icon: iconthreeunselected,
-            label: iconthreelabel,
-          ),
-        ],
-      ),
+      bottomNavigationBar: Theme(
+        data: ThemeData(
+          splashColor: Colors.transparent,
+        ),
+        child: BottomNavigationBar(
+          currentIndex: currentpageindex,
+          selectedItemColor: accentColor,
+          unselectedItemColor: Colors.grey,
+          onTap: (int index) {
+            setState(() {
+              currentpageindex = index;
+            });
+          },
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          type: BottomNavigationBarType.fixed,
+          items: [
+            BottomNavigationBarItem(
+              icon: icononeselected,
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon: icontwoselected,
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon: iconthreeselected,
+              label: '',
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -106,7 +99,7 @@ class TabletNavbar extends StatefulWidget {
 
 class _TabletNavbarState extends State<TabletNavbar> {
 
-  var currentpageindex = globalpageindex;
+  var currentpageindex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -129,15 +122,11 @@ class _TabletNavbarState extends State<TabletNavbar> {
     return LayoutBuilder(
         builder: (context, constraints) {
           return Scaffold(
-            appBar: AppBar(
-              backgroundColor: Theme.of(context).colorScheme.background,
-              title: const Text('Schluckspecht'),
-            ),
             body: Row(
               children: [
                 SafeArea(
                   child: NavigationRail(
-                    backgroundColor: Colors.grey[100],
+                    backgroundColor: Colors.white,
                     extended: constraints.maxWidth >= 750,
                     indicatorColor: accentColor.withOpacity(0.6),
                     selectedIndex: currentpageindex,
@@ -189,7 +178,7 @@ class DesktopNavbar extends StatefulWidget {
 
 class _DesktopNavbarState extends State<DesktopNavbar> {
 
-  var currentpageindex = globalpageindex;
+  var currentpageindex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -220,8 +209,8 @@ class _DesktopNavbarState extends State<DesktopNavbar> {
               children: [
                 SafeArea(
                   child: NavigationRail(
-                    backgroundColor: Colors.grey[100],
-                    indicatorColor: accentColor.withOpacity(0.6),
+                    backgroundColor: Colors.white,
+                    indicatorColor: accentColor.withOpacity(0),
                     selectedIndex: currentpageindex,
                     extended: constraints.maxWidth >= 750,
                     onDestinationSelected: (int index) {
@@ -250,7 +239,7 @@ class _DesktopNavbarState extends State<DesktopNavbar> {
                 ),
                 Expanded(
                   child: Container(
-                    color: Theme.of(context).colorScheme.background,
+                    color: Colors.white,
                     child: page,
                   ),
                 ),

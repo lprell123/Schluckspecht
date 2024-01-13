@@ -1,9 +1,10 @@
 import 'dart:convert';
-
+import 'package:http/http.dart' as http;
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:schluckspecht_app/AppThemes.dart';
 import 'main.dart';
 import 'package:flutter/services.dart' as rootBundle;
 
@@ -17,7 +18,7 @@ class Feedpage extends StatelessWidget {
         title: Text('Feed'),
       ),
       body: FutureBuilder(
-        future: ReadJsonData(),
+        future: readLocalJson(),
         builder: (context, data) {
           if (data.hasError) {
             return Center(child: Text("${data.error}"));
@@ -35,14 +36,14 @@ class Feedpage extends StatelessWidget {
                         child: Text(
                           items[index].title.toString(),
                           style: const TextStyle(
-                            fontSize: 16,
+                            fontSize: AppTextStyle.regularFontSize,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                       if (items[index].content != null)
                         Padding(
-                          padding: const EdgeInsets.all(8),
+                          padding: AppCardStyle.innerPadding,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -51,7 +52,7 @@ class Feedpage extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 8,
                                 style: const TextStyle(
-                                  fontSize: 16,
+                                  fontSize: AppTextStyle.regularFontSize,
                                   fontWeight: FontWeight.normal,
                                 ),
                               ),
@@ -63,12 +64,12 @@ class Feedpage extends StatelessWidget {
                                     },
                                   ));
                                 },
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 8),
+                                child: const Padding(
+                                  padding: EdgeInsets.only(top: 8),
                                   child: Text(
                                     'Weiterlesen',
                                     style: TextStyle(
-                                      color: Colors.black,
+                                      color: AppColors.primaryFontColor,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -81,7 +82,7 @@ class Feedpage extends StatelessWidget {
                         AspectRatio(
                           aspectRatio: 3 / 2, // Seitenverhältnis etwa 2/3
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8.0),
+                            borderRadius: AppCardStyle.cardBorderRadius,
                             child: Image.asset(
                               items[index].imagePath!,
                               fit: BoxFit.cover,
@@ -94,7 +95,7 @@ class Feedpage extends StatelessWidget {
               },
             );
           } else {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
         },
       ),
@@ -104,7 +105,7 @@ class Feedpage extends StatelessWidget {
 
 Future<List<Posts>> fetchData() async {
   try {
-    return await fetchEventsFromApi();
+    return await fetchPostsFromApi();
   } catch (e) {
     print('API request failed. Trying to load local data...');
     return readLocalJson();
@@ -113,22 +114,14 @@ Future<List<Posts>> fetchData() async {
 
 
 
-
-
-
-
-
-Future<List<Posts>>ReadJsonData() async{
-  final jsondata = await rootBundle.rootBundle.loadString('assets/posts.json');
+Future<List<Posts>>readLocalJson() async{
+  final jsondata = await rootBundle.rootBundle.loadString('assets/localData/Contact/contact.json');
   final list = json.decode(jsondata) as List<dynamic>;
 
   return list.map((e) => Posts.fromJson(e)).toList();
 }
 
-<<<<<<< Updated upstream
-
-=======
-Future<List<Posts>> fetchEventsFromApi() async {
+Future<List<Posts>> fetchPostsFromApi() async {
   final response = await http.get(Uri.parse('http://localhost:8080/Feedposts'));
 
   if (response.statusCode == 200) {
@@ -138,7 +131,6 @@ Future<List<Posts>> fetchEventsFromApi() async {
     throw Exception('Failed to load events');
   }
 }
->>>>>>> Stashed changes
 
 class Posts{
   int? id;
@@ -183,20 +175,20 @@ class SecondPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: AppCardStyle.innerPadding,
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: AppCardStyle.innerPadding,
                     child: Text(
                       post.date ?? "",
-                      style: TextStyle(fontSize: 16),
+                      style: const TextStyle(fontSize: AppTextStyle.regularFontSize),
                     ),
                   ),
                 ],
@@ -204,7 +196,7 @@ class SecondPage extends StatelessWidget {
               Text(
                 post.title ?? "",
                 style: const TextStyle(
-                  fontSize: 24,
+                  fontSize: AppTextStyle.titleSize,
                   fontWeight: FontWeight.bold,
                 ),
                 overflow: TextOverflow.visible,
@@ -221,7 +213,7 @@ class SecondPage extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 post.content ?? "",
-                style: TextStyle(fontSize: 18),
+                style: const TextStyle(fontSize: AppTextStyle.largeFontSize),
                 overflow: TextOverflow.visible,
               ),
             ],

@@ -1,121 +1,162 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'main.dart';
-import 'AppColors.dart';
+import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+import 'package:schluckspecht_app/Feed.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart' as rootBundle;
+import 'AppThemes.dart';
+import 'mycustomappbar.dart';
 
 
 class Contactpage extends StatelessWidget {
-  final List<Map<String, String>> contacts = [
-    {
-      'name': 'Fleig, Claus',
-      'position': 'CEO',
-      'phone': '+49 1704563',
-      'email': 'maxmuster@web.de',
-      'imagePath': 'assets/Fleig.jpg', // Pfad zum Bild
-    },
-    {
-      'name': 'Hensel, Stefan',
-      'position': 'CTO',
-      'phone': '+49 1234567',
-      'email': 'janedoe@example.com',
-      'imagePath': 'assets/Hensel.jpg', // Pfad zum Bild
-    },
-    {
-      'name': 'Jane Doe',
-      'position': 'CTO',
-      'phone': '+49 1234567',
-      'email': 'janedoe@example.com',
-      'imagePath': 'assets/Hensel.jpg', // Pfad zum Bild
-    },
-    // Weitere Kontakte hier hinzufügen...
-  ];
+  Contactpage({super.key});
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(),
+      appBar: MyAppBar(title: 'Kontakt', scaffoldKey: scaffoldKey),
+      drawer: MyDrawer(),
       body: Container(
-        color: Colors.grey[100], // Hellgrauer Hintergrund für die gesamte Seite
+        color: Colors.grey[100],
         child: buildContactList(),
       ),
     );
   }
 
-  AppBar buildAppBar() {
-    return AppBar(
-      backgroundColor: Colors.grey[100],
-      automaticallyImplyLeading: false,
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(left: 8.0),
-            child: Image.asset('assets/HO_Logo_Quer_RGB_pos.png', width: 32, height: 32),
-          ),
-          Expanded(
+  Widget buildContactList() {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: fetchData(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text("Error: ${snapshot.error}"));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(child: Text("No data available"));
+        } else {
+          List<Map<String, dynamic>> contacts = snapshot.data!;
+          return SingleChildScrollView(
             child: Center(
-              child: Text(
-                'Kontakte',
-                textAlign: TextAlign.center,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: contacts.map((contact) {
+                  return Column(
+                    children: [
+                      buildContactCard(contact),
+                      const SizedBox(height: 5),
+                    ],
+                  );
+                }).toList(),
               ),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(right: 8.0),
-            child: Image.asset('assets/Fleig.jpg', width: 24, height: 24),
-          ),
-        ],
-      ),
+          );
+        }
+      },
     );
   }
-
-  Widget buildContactList() {
-  return SingleChildScrollView(
-    child: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: contacts.map((contact) {
-          return Column(
-            children: [
-              buildContactCard(contact),
-              SizedBox(height: 20), // Hier wird der Abstand zwischen den Cards eingestellt
-            ],
-          );
-        }).toList(),
-      ),
-    ),
-  );
 }
 
-  Widget buildContactCard(Map<String, String?> contact) {
-  return Card( 
-    elevation: 8, // Erhöhe den elevation-Wert für einen weicheren Schatten
-    margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20), // Beispielhafter Rand um die Karte
+
+
+Future<List<Map<String, dynamic>>> fetchData() async {
+  try {
+    return await fetchContactsFromApi();
+  } catch (e) {
+    print('API request failed. Trying to load local data...');
+    return readLocalJson();
+  }
+}
+Future<List<Map<String, dynamic>>> fetchContactsFromApi() async {
+    final response = await http.get(
+      Uri.parse('http://localhost:8080/Contactforms'),
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> list = json.decode(response.body);
+
+      List<Map<String, dynamic>> contacts = list
+          .map((item) => Map<String, dynamic>.from(item as Map<String, dynamic>))
+          .toList();
+
+      return contacts;
+    } else {
+      throw Exception('Failed to load contacts');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>>readLocalJson() async{
+  final jsondata = await rootBundle.rootBundle.loadString('assets/localData/Contact/contact.json');
+  final list = json.decode(jsondata) as List<dynamic>;
+
+  return list.map((e) => Contact.fromJson(e)).toList();
+}
+
+class Contact{
+  int? id;
+  String? name;
+  String? position;
+  String? phonenumber;
+  String? email;
+  String? imagePath;
+  
+
+  Contact(
+    {
+      this.id, 
+      this.name, 
+      this.position,
+      this.phonenumber,
+      this.email,
+      this.imagePath,
+    }
+   );
+  
+  Contact.fromJson(Map<String,dynamic> json)
+  {
+    id=json['id'];
+    name=json['name'];
+    position=json['position'];
+    phonenumber=json['phonenumber'];
+    email=json['email'];
+    imagePath=json['imagePath'];
+    
+  }
+}
+  
+
+
+  Widget buildContactCard(Map<String, dynamic> contact) {
+  return Card(
+    color: AppColors.cardColor,
+    elevation: 0, // Erhöhe den elevation-Wert für einen weicheren Schatten
+    margin: AppCardStyle.cardMargin, // Beispielhafter Rand um die Karte
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(10), // Beispielhafter Wert für die abgerundeten Ecken
+      borderRadius: AppCardStyle.cardBorderRadius // Beispielhafter Wert für die abgerundeten Ecken
     ),
     child: Padding(
      
-      padding: EdgeInsets.all(16.0),
+      padding: AppCardStyle.innerPadding,
       child: Column(
         children: [
           buildAvatar(contact['imagePath'] ?? ''),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           buildContactName(contact['name'] ?? ''),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           buildContactDetails(
             contact['position'] ?? '',
             contact['phone'] ?? '',
             contact['email'] ?? '',
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           buildTextField('Name'),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           buildTextField('Betreff'),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           buildTextField('Ihre Nachricht'),
-          SizedBox(height: 20),
+          const SizedBox(height: 10),
           buildElevatedButton(),
+          const SizedBox(height: 10,)
        ],
       ),
     ),
@@ -131,14 +172,14 @@ class Contactpage extends StatelessWidget {
           child: Container(
             width: 80,
             height: 80,
-            color: AppColors.SecondaryBlue,
+            color: AppColors.secondaryBlue,
             child: Image.asset(
               imagePath ?? 'assets/default_image.jpg',
               fit: BoxFit.cover,
             ),
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
       ],
     );
   }
@@ -147,10 +188,10 @@ class Contactpage extends StatelessWidget {
     return Text(
       name ?? '',
       textAlign: TextAlign.center,
-      style: TextStyle(
-        fontSize: 16,
+      style: const TextStyle(
+        fontSize: AppTextStyle.regularFontSize,
         fontWeight: FontWeight.bold,
-        color: Colors.black,
+        color: AppColors.primaryFontColor,
       ),
     );
   }
@@ -159,10 +200,10 @@ class Contactpage extends StatelessWidget {
     return Text(
       '$position \n $phone \n $email',
       textAlign: TextAlign.center,
-      style: TextStyle(
-        fontSize: 14,
+      style: const TextStyle(
+        fontSize: AppTextStyle.smallFontSize,
         fontWeight: FontWeight.normal,
-        color: Colors.black,
+        color: AppColors.primaryFontColor,
       ),
     );
   }
@@ -174,7 +215,7 @@ class Contactpage extends StatelessWidget {
       child: TextField(
         decoration: InputDecoration(
           filled: true,
-          fillColor: AppColors.SecondaryGrey,
+          fillColor: AppColors.secondaryGrey,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
             borderSide: BorderSide.none,
@@ -190,16 +231,15 @@ Widget buildElevatedButton() {
     onPressed: () {
       // Aktion, die beim Klicken des Buttons ausgeführt werden soll
     },
-    child: Text(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: AppColors.primaryBlue,
+      shape: RoundedRectangleBorder(
+        borderRadius: AppCardStyle.cardBorderRadius, // Ändere den Radius hier nach Bedarf
+      ),
+    ),
+    child: const Text(
       'Kontakt Aufnehmen',
       style: TextStyle(color: Colors.white),
     ),
-    style: ElevatedButton.styleFrom(
-      backgroundColor: AppColors.Primaryblue,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0), // Ändere den Radius hier nach Bedarf
-      ),
-    ),
   );
-}
 }
