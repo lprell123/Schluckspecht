@@ -9,17 +9,18 @@ import 'main.dart';
 import 'package:flutter/services.dart' as rootBundle;
 
 class Feedpage extends StatelessWidget {
+
+  Feedpage({super.key});
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-    var statevalue = appState.selectedpage;
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Feed'),
       ),
       body: FutureBuilder<List<Posts>>(
-        future: readLocalJson(),
+        future: fetchData(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(child: Text("Error: ${snapshot.error}"));
@@ -28,6 +29,10 @@ class Feedpage extends StatelessWidget {
             return ListView.builder(
               itemCount: items.length,
               itemBuilder: (context, index) {
+                return Container(
+                 margin: AppCardStyle.innerPadding,
+                  child: buildPostCard(context, items[index]),
+                   );
                 return buildPostCard(context, items[index]);
               },
             );
@@ -49,8 +54,9 @@ class Feedpage extends StatelessWidget {
             child: Text(
               post.title ?? '',
               style: const TextStyle(
-                fontSize: AppTextStyle.regularFontSize,
+                fontSize: AppTextStyle.largeFontSize,
                 fontWeight: FontWeight.bold,
+                decoration: TextDecoration.underline,
               ),
             ),
           ),
@@ -107,6 +113,7 @@ class Feedpage extends StatelessWidget {
     );
   }
 }
+
 Future<List<Posts>> fetchData() async {
   try {
     return await fetchPostsFromApi();
@@ -119,7 +126,7 @@ Future<List<Posts>> fetchData() async {
 
 
 Future<List<Posts>>readLocalJson() async{
-  final jsondata = await rootBundle.rootBundle.loadString('assets/localData/Contact/contact.json');
+  final jsondata = await rootBundle.rootBundle.loadString('assets/localData/Feed/posts.json');
   final list = json.decode(jsondata) as List<dynamic>;
 
   return list.map((e) => Posts.fromJson(e)).toList();
