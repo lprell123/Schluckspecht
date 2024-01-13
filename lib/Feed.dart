@@ -13,85 +13,22 @@ class Feedpage extends StatelessWidget {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     var statevalue = appState.selectedpage;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Feed'),
       ),
-      body: FutureBuilder(
+      body: FutureBuilder<List<Posts>>(
         future: readLocalJson(),
-        builder: (context, data) {
-          if (data.hasError) {
-            return Center(child: Text("${data.error}"));
-          } else if (data.hasData) {
-            var items = data.data as List<Posts>;
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(child: Text("Error: ${snapshot.error}"));
+          } else if (snapshot.hasData) {
+            var items = snapshot.data!;
             return ListView.builder(
               itemCount: items.length,
               itemBuilder: (context, index) {
-                return Card(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8, right: 8, top: 8),
-                        child: Text(
-                          items[index].title.toString(),
-                          style: const TextStyle(
-                            fontSize: AppTextStyle.regularFontSize,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      if (items[index].content != null)
-                        Padding(
-                          padding: AppCardStyle.innerPadding,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                items[index].content.toString(),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 8,
-                                style: const TextStyle(
-                                  fontSize: AppTextStyle.regularFontSize,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                              InkWell(
-                                onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (BuildContext context) {
-                                      return SecondPage(post: items[index]);
-                                    },
-                                  ));
-                                },
-                                child: const Padding(
-                                  padding: EdgeInsets.only(top: 8),
-                                  child: Text(
-                                    'Weiterlesen',
-                                    style: TextStyle(
-                                      color: AppColors.primaryFontColor,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      if (items[index].imagePath != null)
-                        AspectRatio(
-                          aspectRatio: 3 / 2, // Seitenverhältnis etwa 2/3
-                          child: ClipRRect(
-                            borderRadius: AppCardStyle.cardBorderRadius,
-                            child: Image.asset(
-                              items[index].imagePath!,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                );
+                return buildPostCard(context, items[index]);
               },
             );
           } else {
@@ -101,8 +38,75 @@ class Feedpage extends StatelessWidget {
       ),
     );
   }
-}
 
+  Widget buildPostCard(BuildContext context, Posts post) {
+    return Card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 8, right: 8, top: 8),
+            child: Text(
+              post.title ?? '',
+              style: const TextStyle(
+                fontSize: AppTextStyle.regularFontSize,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          if (post.content != null)
+            Padding(
+              padding: AppCardStyle.innerPadding,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    post.content!,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 8,
+                    style: const TextStyle(
+                      fontSize: AppTextStyle.regularFontSize,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (BuildContext context) {
+                          return SecondPage(post: post);
+                        },
+                      ));
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.only(top: 8),
+                      child: Text(
+                        'Weiterlesen',
+                        style: TextStyle(
+                          color: AppColors.primaryFontColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          if (post.imagePath != null)
+            AspectRatio(
+              aspectRatio: 3 / 2,
+              child: ClipRRect(
+                borderRadius: AppCardStyle.cardBorderRadius,
+                child: Image.asset(
+                  post.imagePath!,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
 Future<List<Posts>> fetchData() async {
   try {
     return await fetchPostsFromApi();
@@ -138,6 +142,7 @@ class Posts{
   String? content;
   String? date;
   String? imagePath;
+  String? source;
   
 
   Posts(
@@ -147,6 +152,7 @@ class Posts{
       this.content,
       this.date,
       this.imagePath,
+      this.source,
     }
    );
   
@@ -157,6 +163,7 @@ class Posts{
     content=json['content'];
     date=json['date'];
     imagePath=json['imagePath'];
+    source=json['source'];
     
   }
 
@@ -215,6 +222,17 @@ class SecondPage extends StatelessWidget {
                 post.content ?? "",
                 style: const TextStyle(fontSize: AppTextStyle.largeFontSize),
                 overflow: TextOverflow.visible,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                post.source ?? "",
+                style: const TextStyle(
+                  fontSize: AppTextStyle.smallFontSize,
+                  color: AppColors.secondaryFontColor,
+                  ),
+                  
+                overflow: TextOverflow.visible,
+
               ),
             ],
           ),

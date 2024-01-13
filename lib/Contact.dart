@@ -26,7 +26,7 @@ class Contactpage extends StatelessWidget {
 
   Widget buildContactList() {
     return FutureBuilder<List<Map<String, dynamic>>>(
-      future: fetchData(),
+      future: fetchContactsFromApi(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -59,14 +59,7 @@ class Contactpage extends StatelessWidget {
 
 
 
-Future<List<Map<String, dynamic>>> fetchData() async {
-  try {
-    return await fetchContactsFromApi();
-  } catch (e) {
-    print('API request failed. Trying to load local data...');
-    return readLocalJson();
-  }
-}
+
 Future<List<Map<String, dynamic>>> fetchContactsFromApi() async {
     final response = await http.get(
       Uri.parse('http://localhost:8080/Contactforms'),
@@ -85,12 +78,7 @@ Future<List<Map<String, dynamic>>> fetchContactsFromApi() async {
     }
   }
 
-  Future<List<Map<String, dynamic>>>readLocalJson() async{
-  final jsondata = await rootBundle.rootBundle.loadString('assets/localData/Contact/contact.json');
-  final list = json.decode(jsondata) as List<dynamic>;
-
-  return list.map((e) => Contact.fromJson(e)).toList();
-}
+ 
 
 class Contact{
   int? id;
