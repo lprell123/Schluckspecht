@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:schluckspecht_app/AppThemes.dart';
 import 'main.dart';
 import 'package:flutter/services.dart' as rootBundle;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Feedpage extends StatelessWidget {
 
@@ -134,14 +135,42 @@ Future<List<Posts>>readLocalJson() async{
 }
 
 Future<List<Posts>> fetchPostsFromApi() async {
-  final response = await http.get(Uri.parse('http://localhost:8080/Feedposts'));
+  try {
+    final response = await http.get(Uri.parse('http://localhost:8080/Feedposts'));
 
-  if (response.statusCode == 200) {
-    final List<dynamic> list = json.decode(response.body);
-    return list.map((e) => Posts.fromJson(e)).toList();
-  } else {
-    throw Exception('Failed to load events');
+    if (response.statusCode == 200) {
+      final List<dynamic> list = json.decode(response.body);
+      final posts = list.map((e) => Posts.fromJson(e)).toList();
+
+      // Lokale Speicherung der JSON-Daten
+      await saveDataLocally(posts);
+
+      return posts;
+    } else {
+      throw Exception('Failed to load events');
+    }
+  } catch (e) {
+    // Beim Fehler lokale Daten laden, wenn verfügbar
+    return getLocalData();
   }
+}
+
+Future<void> saveDataLocally(List<Posts> posts) async {
+  final prefs = await SharedPreferences.getInstance();
+  final key = 'posts';
+  final value = jsonEncode(posts.map((post) => post.toJson()).toList());
+  prefs.setString(key, value);
+}
+
+Future<List<Posts>> getLocalData() async {
+  final prefs = await SharedPreferences.getInstance();
+  final key = 'posts';
+  final value = prefs.getString(key);
+  if (value != null) {
+    final List<dynamic> decoded = jsonDecode(value);
+    return decoded.map((e) => Posts.fromJson(e)).toList();
+  }
+  return [];
 }
 
 class Posts{
@@ -173,6 +202,17 @@ class Posts{
     imagePath=json['imagePath'];
     source=json['source'];
     
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'content': content,
+      'date': date,
+      'imagePath': imagePath,
+      'source': source,
+    };
   }
 
 
