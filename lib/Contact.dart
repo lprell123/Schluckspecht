@@ -5,6 +5,8 @@ import 'dart:convert';
 import 'package:flutter/services.dart' as rootBundle;
 import 'AppThemes.dart';
 import 'mycustomappbar.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
+
 
 
 
@@ -12,6 +14,8 @@ import 'mycustomappbar.dart';
 class Contactpage extends StatelessWidget {
   Contactpage({super.key});
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -46,16 +50,23 @@ class Contactpage extends StatelessWidget {
 }
 
 Widget buildContactCard(BuildContext context, Contact contact) {
+  final GlobalKey<FormState> _key = GlobalKey<FormState>();
+  final TextEditingController body = TextEditingController();
+  final TextEditingController email = TextEditingController();
+  final TextEditingController subject = TextEditingController();
+ 
+  
+
   return Card(
-    color: AppColors.cardColor,
-    elevation: 0, // Erhöhe den elevation-Wert für einen weicheren Schatten
-    margin: AppCardStyle.cardMargin, // Beispielhafter Rand um die Karte
-    shape: RoundedRectangleBorder(
-      borderRadius: AppCardStyle.cardBorderRadius // Beispielhafter Wert für die abgerundeten Ecken
-    ),
-    child: Padding(
-     
-      padding: AppCardStyle.innerPadding,
+  color: AppColors.cardColor,
+  elevation: 0,
+  margin: AppCardStyle.cardMargin,
+  shape: RoundedRectangleBorder(
+    borderRadius: AppCardStyle.cardBorderRadius,
+  ),
+  child: Padding(
+    padding: AppCardStyle.innerPadding,
+    child: Form(
       child: Column(
         children: [
           buildAvatar(contact.imagePath ?? ''),
@@ -68,18 +79,48 @@ Widget buildContactCard(BuildContext context, Contact contact) {
             contact.email ?? '',
           ),
           const SizedBox(height: 10),
-          buildTextField('Name'),
+          TextFormField(
+            controller: body,
+            decoration: const InputDecoration(
+              fillColor: Colors.white,
+              filled: true,
+              enabledBorder: InputBorder.none,
+              hintText: "Betreff",
+            ),
+          ),
           const SizedBox(height: 10),
-          buildTextField('Betreff'),
+          TextFormField(
+            controller: subject,
+            decoration: const InputDecoration(
+              fillColor: Colors.white,
+              filled: true,
+              enabledBorder: InputBorder.none,
+              hintText: "Ihre Nachricht",
+            ),
+          ),
           const SizedBox(height: 10),
-          buildTextField('Ihre Nachricht'),
-          const SizedBox(height: 10),
-          buildElevatedButton(),
-          const SizedBox(height: 10,)
-       ],
+          ElevatedButton(
+            onPressed: () async {
+              _key.currentState!.save();
+              String recipientEmail = contact.email ?? '';
+              sendEmail(subject.text, body.text, recipientEmail);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primaryBlue,
+              shape: RoundedRectangleBorder(
+                borderRadius: AppCardStyle.cardBorderRadius,
+              ),
+            ),
+            child: const Text(
+              'Kontakt Aufnehmen',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
       ),
     ),
-  );
+  ),
+);
 }
       
     
@@ -161,11 +202,12 @@ class Contact{
       children: [
         ClipOval(
           child: Container(
+
             width: 80,
             height: 80,
             color: AppColors.secondaryBlue,
             child: Image.asset(
-              imagePath ?? 'assets/default_image.jpg',
+              imagePath ?? '',
               fit: BoxFit.cover,
             ),
           ),
@@ -188,49 +230,43 @@ class Contact{
   }
 
   Widget buildContactDetails(String position, String phonenumber, String email) {
-    return Text(
-      '$position \n $phonenumber \n $email',
-      textAlign: TextAlign.center,
-      style: const TextStyle(
-        fontSize: AppTextStyle.smallFontSize,
-        fontWeight: FontWeight.normal,
-        color: AppColors.primaryFontColor,
-      ),
-    );
-  }
-
-  Widget buildTextField(String labelText) {
     return SizedBox(
-      width: 250,
-      height: labelText == 'Ihre Nachricht' ? 70 : 40,
-      child: TextField(
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: AppColors.secondaryGrey,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide.none,
-          ),
-          labelText: labelText,
+    
+      child: Text(
+        '$position \n $phonenumber \n $email',
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          fontSize: AppTextStyle.smallFontSize,
+          fontWeight: FontWeight.normal,
+          color: AppColors.primaryFontColor,
         ),
       ),
     );
   }
 
-Widget buildElevatedButton() {
-  return ElevatedButton(
-    onPressed: () {
-      // Aktion, die beim Klicken des Buttons ausgeführt werden soll
-    },
-    style: ElevatedButton.styleFrom(
-      backgroundColor: AppColors.primaryBlue,
-      shape: RoundedRectangleBorder(
-        borderRadius: AppCardStyle.cardBorderRadius, // Ändere den Radius hier nach Bedarf
-      ),
-    ),
-    child: const Text(
-      'Kontakt Aufnehmen',
-      style: TextStyle(color: Colors.white),
-    ),
+
+sendEmail( String subject, String body, String recipientEmail) async {
+  
+  final Email email = Email(
+    body: body,
+    subject: subject,
+    recipients: [recipientEmail],
+
+    isHTML: false,
   );
+
+  try {
+    await FlutterEmailSender.send(email);
+  } catch (error) {
+    var scaffoldKey;
+    scaffoldKey.currentState?.showSnackBar(SnackBar(
+      content: Text('Fehler beim Senden der E-Mail: $error'),
+    ));
+  }
 }
+
+
+
+
+  
+
