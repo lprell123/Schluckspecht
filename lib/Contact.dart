@@ -134,7 +134,7 @@ Widget buildContactCard(BuildContext context, Contact contact) {
 
 
 Future<List<Contact>>readLocalJson() async{
-  final jsondata = await rootBundle.rootBundle.loadString('assets/localData/Feed/posts.json');
+  final jsondata = await rootBundle.rootBundle.loadString('assets/localData/Contact/contact.json');
   final list = json.decode(jsondata) as List<dynamic>;
 
   return list.map((e) => Contact.fromJson(e)).toList();
@@ -154,7 +154,7 @@ Future<List<Contact>> fetchData() async {
 Future<void> saveToLocal(List<Contact> posts) async {
   try {
     final jsonData = jsonEncode(posts.map((post) => post.toJson()).toList());
-    await writeLocalJson(jsonData, 'assets/localData/Feed/saveToLocal/postsFromApi.json');
+    await writeLocalJson(jsonData, 'assets/localData/Contact/saveToLocal/contactsFromApi.json');
   } catch (e) {
     print('Error saving data locally: $e');
   }
