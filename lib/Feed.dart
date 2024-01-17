@@ -1,9 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:schluckspecht_app/AppThemes.dart';
 import 'main.dart';
 import 'package:flutter/services.dart' as rootBundle;
@@ -155,19 +156,6 @@ class Feedpage extends StatelessWidget {
 }
 
 
-
-
-Future<List<Posts>> fetchData() async {
-  try {
-    return await fetchPostsFromApi();
-  } catch (e) {
-    print('API request failed. Trying to load local data...');
-    return readLocalJson();
-  }
-}
-
-
-
 Future<List<Posts>>readLocalJson() async{
   final jsondata = await rootBundle.rootBundle.loadString('assets/localData/Feed/posts.json');
   final list = json.decode(jsondata) as List<dynamic>;
@@ -175,20 +163,54 @@ Future<List<Posts>>readLocalJson() async{
   return list.map((e) => Posts.fromJson(e)).toList();
 }
 
+Future<List<Posts>> fetchData() async {
+  try {
+    List<Posts> posts = await fetchPostsFromApi();
+    await saveToLocal(posts);
+    return posts;
+  } catch (e) {
+    print('API request failed. Trying to load local data...');
+    return readLocalJson();
+  }
+}
+
+Future<void> saveToLocal(List<Posts> posts) async {
+  try {
+    final jsonData = jsonEncode(posts.map((post) => post.toJson()).toList());
+    await writeLocalJson(jsonData, 'assets/localData/Feed/saveToLocal/postsFromApi.json');
+  } catch (e) {
+    print('Error saving data locally: $e');
+  }
+}
+
+Future<void> writeLocalJson(String jsonData, String fileName) async {
+  try {
+    Directory appDocumentsDirectory = await getApplicationDocumentsDirectory();
+    String filePath = '${appDocumentsDirectory.path}/$fileName';
+
+    File file = File(filePath);
+    await file.writeAsString(jsonData);
+
+    print('Data saved to local file: $filePath');
+  } catch (e) {
+    print('Error writing to local file: $e');
+  }
+}
+
+
+
+
 Future<List<Posts>> fetchPostsFromApi() async {
-    final response = await http.get(Uri.parse('http://localhost:8080/Feedposts'));
+  final response = await http.get(Uri.parse('http://localhost:8080/Feedposts'));
 
-    if (response.statusCode == 200) {
-      final List<dynamic> list = json.decode(response.body);
-      final posts = list.map((e) => Posts.fromJson(e)).toList();
+  if (response.statusCode == 200) {
+    final List<dynamic> list = json.decode(response.body);
+    final posts = list.map((e) => Posts.fromJson(e)).toList();
 
-      return posts;
-    } else {
-      throw Exception('Failed to load events');
-    }
-
-   
-  
+    return posts;
+  } else {
+    throw Exception('Failed to load events');
+  }
 }
 
 
@@ -227,7 +249,18 @@ class Posts{
     
   }
 
+ Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'content': content,
+      'date': date,
+      'imagePath': imagePath,
+      'imageSource': imageSource,
+      'source': source,
+    };
 
+}
 }
 
 

@@ -20,6 +20,7 @@ class Contactpage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
         title: Text('Kontakt'),
       ),
@@ -37,7 +38,7 @@ class Contactpage extends StatelessWidget {
                  margin: AppCardStyle.innerPadding,
                   child: buildContactCard(context, items[index]),
                    );
-                return buildContactCard(context, items[index]);
+                
               },
             );
           } else {
@@ -52,7 +53,6 @@ class Contactpage extends StatelessWidget {
 Widget buildContactCard(BuildContext context, Contact contact) {
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
   final TextEditingController body = TextEditingController();
-  final TextEditingController email = TextEditingController();
   final TextEditingController subject = TextEditingController();
  
   
