@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/services.dart' as rootBundle;
+import 'package:path_provider/path_provider.dart';
 import 'AppThemes.dart';
 import 'mycustomappbar.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
@@ -128,36 +131,67 @@ Widget buildContactCard(BuildContext context, Contact contact) {
 
   
 
-Future<List<Contact>> fetchData() async {
-  try {
-    return await fetchContactsFromApi();
-  } catch (e) {
-    print('API request failed. Trying to load local data...');
-    return readLocalJson();
-  }
-}
 
 
-Future<List<Contact>> fetchContactsFromApi() async {
-    final response = await http.get(
-      Uri.parse('http://localhost:8080/Contactforms'),
-    );
-
-    if (response.statusCode == 200) {
-    final List<dynamic> list = json.decode(response.body);
-    return list.map((e) => Contact.fromJson(e)).toList();
-  } else {
-    throw Exception('Failed to load events');
-  }
-  }
-
-  
 Future<List<Contact>>readLocalJson() async{
   final jsondata = await rootBundle.rootBundle.loadString('assets/localData/Feed/posts.json');
   final list = json.decode(jsondata) as List<dynamic>;
 
   return list.map((e) => Contact.fromJson(e)).toList();
 }
+
+Future<List<Contact>> fetchData() async {
+  try {
+    List<Contact> posts = await fetchPostsFromApi();
+    await saveToLocal(posts);
+    return posts;
+  } catch (e) {
+    print('API request failed. Trying to load local data...');
+    return readLocalJson();
+  }
+}
+
+Future<void> saveToLocal(List<Contact> posts) async {
+  try {
+    final jsonData = jsonEncode(posts.map((post) => post.toJson()).toList());
+    await writeLocalJson(jsonData, 'assets/localData/Feed/saveToLocal/postsFromApi.json');
+  } catch (e) {
+    print('Error saving data locally: $e');
+  }
+}
+
+Future<void> writeLocalJson(String jsonData, String fileName) async {
+  try {
+    Directory appDocumentsDirectory = await getApplicationDocumentsDirectory();
+    String filePath = '${appDocumentsDirectory.path}/$fileName';
+
+    File file = File(filePath);
+    await file.writeAsString(jsonData);
+
+    print('Data saved to local file: $filePath');
+  } catch (e) {
+    print('Error writing to local file: $e');
+  }
+}
+
+
+
+
+Future<List<Contact>> fetchPostsFromApi() async {
+  final response = await http.get(Uri.parse('http://localhost:8080/Feedposts'));
+
+  if (response.statusCode == 200) {
+    final List<dynamic> list = json.decode(response.body);
+    final posts = list.map((e) => Contact.fromJson(e)).toList();
+
+    return posts;
+  } else {
+    throw Exception('Failed to load events');
+  }
+}
+
+  
+
 
 
  
@@ -190,9 +224,24 @@ class Contact{
     phonenumber=json['phonenumber'];
     email=json['email'];
     imagePath=json['imagePath'];
+  }
+
+    Map<String, dynamic> toJson()
+  {
+    return {
+      'id': id,
+      'name': name,
+      
+      'position': position,
+      'phonenumber': phonenumber,
+      'email': email,
+      'imagePath': imagePath,
+    };
+
+  }
     
   }
-}
+
   
 
 
