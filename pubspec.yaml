@@ -72,6 +72,8 @@ flutter:
     - assets/localData/Feed/posts.json
     - assets/localData/Feed/images/Gruppenfoto_2019.jpg
     - assets/localData/Feed/images/Gruppenfoto_2022.webp
+    - assets/localData/Feed/images/Gruppenfoto_Berghem.webp
+    - assets/localData/Feed/images/Gruppenfoto_Indien.webp
     - assets/localData/History/events.json
     - assets/localData/Contact/contact.json
     - assets/images/
