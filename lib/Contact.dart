@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'AppThemes.dart';
+import 'ErrorCard.dart';
 import 'mycustomappbar.dart';
 
 
@@ -29,7 +30,7 @@ class Contactpage extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return Center(child: Text("Error: ${snapshot.error}"));
+          return Center(child: CenteredErrorCard(errorCode: "Api Request failed"));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return Center(child: Text("No data available"));
         } else {

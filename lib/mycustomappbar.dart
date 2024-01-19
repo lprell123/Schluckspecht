@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:schluckspecht_app/Adminform/Loginform.dart';
 import 'package:schluckspecht_app/AppThemes.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -17,9 +18,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Colors.white,
       elevation: 0,
       automaticallyImplyLeading: false,
-      centerTitle: true,
       title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             children: [
@@ -44,15 +43,23 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ],
           ),
-          SizedBox(width: 8),
-          Text(
-            title,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 18,
-            ),
+          SizedBox(width: 10),
+          Container(
+            width: 2.0, // Adjust the width of the line as needed
+            height: 30.0, // Adjust the height of the line as needed
+            color: Colors.grey[300], // Set the color of the line
           ),
           SizedBox(width: 8),
+          Center(child:
+            Text(
+              title,
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+              ),
+            ),
+          ),
+          Spacer(),
           Container(
             width: 50,
             height: 50,
@@ -115,7 +122,6 @@ class _MyDrawerState extends State<MyDrawer> {
                       setState(() {
                         isDarkMode = value;
                       });
-                      // You can handle the light/dark mode change here
                     },
                     activeColor: AppColors.PrimaryRed, // Color when the switch is ON
                     activeTrackColor: Colors.grey[100], // Color of the track when the switch is ON
@@ -130,10 +136,9 @@ class _MyDrawerState extends State<MyDrawer> {
               leading: Icon(Icons.admin_panel_settings),
               title: Text('Admin Panel'),
               onTap: () {
-                // Navigate to the Admin Panel page
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AdminPanelPage()),
+                  MaterialPageRoute(builder: (context) => LoginForm()),
                 );
               },
             ),
@@ -144,16 +149,3 @@ class _MyDrawerState extends State<MyDrawer> {
   }
 }
 
-class AdminPanelPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Admin Panel'),
-      ),
-      body: Center(
-        child: Text('Admin Panel Content'),
-      ),
-    );
-  }
-}

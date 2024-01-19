@@ -1,10 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:schluckspecht_app/AppThemes.dart';
-import 'themes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'navbar.dart';
-import 'package:schluckspecht_app/themes.dart';
 
 
 // Hex Color function
@@ -143,17 +140,37 @@ class MyHomePage extends StatefulWidget {
 
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.delayed(Duration(seconds: 5), () {
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-        if (constraints.maxWidth >= 750) {
-          return const DesktopNavbar();
-        } else if (constraints.maxWidth >= 600) {
-          return const TabletNavbar();
-        } else {
-          return const MobileNavbar();
-        }
-      },
-    );
+      if (constraints.maxWidth >= 750) {
+        return const DesktopNavbar();
+      } else if (constraints.maxWidth >= 600) {
+        return const TabletNavbar();
+      } else {
+        return isLoading
+            ? Center(
+          child: CachedNetworkImage(
+            imageUrl: '',
+            placeholder: (context, url) => Image.asset('Preloader.gif'),
+            errorWidget: (context, url, error) => Image.asset('Preloader.gif', width: 200, height: 200,),
+          ),
+        )
+            : const MobileNavbar();
+      }
+    });
   }
 }

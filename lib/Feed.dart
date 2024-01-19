@@ -5,6 +5,7 @@ import 'package:flutter/services.dart' as rootBundle;
 import 'package:schluckspecht_app/AppThemes.dart';
 import 'package:http/http.dart' as http;
 
+import 'ErrorCard.dart';
 import 'mycustomappbar.dart';
 
 class Feedpage extends StatelessWidget {
@@ -21,7 +22,7 @@ class Feedpage extends StatelessWidget {
         future: readApiData(),
         builder: (context, data) {
           if (data.hasError) {
-            return Center(child: Text("${data.error}"));
+            return Center(child: CenteredErrorCard(errorCode: "Api Request failed"));
           } else if (data.hasData) {
             var items = data.data as List<Posts>;
             return ListView.builder(

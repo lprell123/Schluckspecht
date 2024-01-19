@@ -4,7 +4,6 @@ import 'package:schluckspecht_app/Feed.dart';
 import 'package:schluckspecht_app/History.dart';
 import 'package:schluckspecht_app/themes.dart';
 
-
 const icononeunselected = Icon(Icons.contact_page_outlined);
 const icononeselected = Icon(Icons.contact_page_rounded);
 const icononelabel = 'Contact';
