@@ -2,6 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'navbar.dart';
+import 'package:provider/provider.dart';
+import 'package:schluckspecht_app/AppThemes.dart';
+import 'themes.dart';
+import 'package:schluckspecht_app/themes.dart';
 
 
 // Hex Color function
@@ -30,6 +34,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Schluckspecht',
+      color: AppColors.backgroundColor,
       theme: ThemeData(
         useMaterial3: true,
         textTheme: GoogleFonts.robotoTextTheme().copyWith(

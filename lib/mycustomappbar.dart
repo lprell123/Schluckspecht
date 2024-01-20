@@ -25,7 +25,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
               IconButton(
                 icon: Icon(
                   Icons.menu,
-                  color: AppColors.Primaryblue,
+                  color: AppColors.primaryBlue,
                   size: 34,
                 ),
                 onPressed: () {
@@ -123,15 +123,14 @@ class _MyDrawerState extends State<MyDrawer> {
                         isDarkMode = value;
                       });
                     },
-                    activeColor: AppColors.PrimaryRed, // Color when the switch is ON
+                    activeColor: AppColors.primaryRed, // Color when the switch is ON
                     activeTrackColor: Colors.grey[100], // Color of the track when the switch is ON
-                    inactiveThumbColor: AppColors.Primaryblue, // Color of the thumb when the switch is OFF
+                    inactiveThumbColor: AppColors.primaryBlue, // Color of the thumb when the switch is OFF
                     inactiveTrackColor: Colors.grey[100], // Color of the track when the switch is OFF
                   ),
                 ),
               ],
             ),
-
             ListTile(
               leading: Icon(Icons.admin_panel_settings),
               title: Text('Admin Panel'),
@@ -148,4 +147,3 @@ class _MyDrawerState extends State<MyDrawer> {
     );
   }
 }
-

@@ -5,7 +5,7 @@ import "package:schluckspecht_app/componentsTimeline/my_timeline_tile.dart";
 import 'package:flutter/services.dart' as rootBundle;
 import 'package:schluckspecht_app/mycustomappbar.dart';
 import 'package:http/http.dart' as http;
-
+import 'AppThemes.dart';
 import 'ErrorCard.dart';
 
 
@@ -16,13 +16,13 @@ class Historypage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 247, 247, 247),
+      backgroundColor: AppColors.backgroundColor,
       appBar: MyAppBar(title: 'Historie', scaffoldKey: scaffoldKey),
       drawer: MyDrawer(),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: FutureBuilder(
-          future: fetchEventsFromApi(),
+          future: fetchData(),
           builder: (context, data) {
             if(data.hasError) {
               return Center(child: CenteredErrorCard(errorCode: "Api Request failed"));
@@ -66,15 +66,26 @@ class Historypage extends StatelessWidget {
       )
     );
   }
-
 }
 
+
+Future<List<Events>> fetchData() async {
+  try {
+    return await fetchEventsFromApi();
+  } catch (e) {
+    print('API request failed. Trying to load local data...');
+    return ReadJsonData();
+  }
+}
+
+
 Future<List<Events>>ReadJsonData() async{
-  final jsondata = await rootBundle.rootBundle.loadString('assets/events.json');
+  final jsondata = await rootBundle.rootBundle.loadString('assets/localData/History/events.json');
   final list = json.decode(jsondata) as List<dynamic>;
 
   return list.map((e) => Events.fromJson(e)).toList();
 }
+
 
 Future<List<Events>> fetchEventsFromApi() async {
   final response = await http.get(Uri.parse('http://localhost:8080/Timelineposts'));
@@ -86,6 +97,7 @@ Future<List<Events>> fetchEventsFromApi() async {
     throw Exception('Failed to load events');
   }
 }
+
 
 class Events{
   int? id;
@@ -140,6 +152,7 @@ class Events{
     imagePath=json['imagePath'];
   }
 }
+
 
 class FullText extends StatelessWidget {
   final Events event;

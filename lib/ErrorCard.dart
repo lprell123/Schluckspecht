@@ -19,7 +19,7 @@ class CenteredErrorCard extends StatelessWidget {
             children: <Widget>[
               Icon(
                 Icons.error,
-                color: AppColors.PrimaryRed,
+                color: AppColors.primaryRed,
                 size: 56.0,
               ),
               SizedBox(height: 12.0),
@@ -34,7 +34,7 @@ class CenteredErrorCard extends StatelessWidget {
                 },
                 child: Icon(
                   Icons.info_outline,
-                  color: AppColors.Primaryblue,
+                  color: AppColors.primaryBlue,
                   size: 24.0,
                 ),
               ),

@@ -4,6 +4,9 @@ import 'package:schluckspecht_app/Feed.dart';
 import 'package:schluckspecht_app/History.dart';
 import 'package:schluckspecht_app/themes.dart';
 
+
+int pageIndex=0;
+
 const icononeunselected = Icon(Icons.contact_page_outlined);
 const icononeselected = Icon(Icons.contact_page_rounded);
 const icononelabel = 'Contact';
@@ -27,7 +30,7 @@ class MobileNavbar extends StatefulWidget {
 
 class _MobileNavbarState extends State<MobileNavbar> {
 
-  var currentpageindex = 0;
+  var currentpageindex = pageIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +101,7 @@ class TabletNavbar extends StatefulWidget {
 
 class _TabletNavbarState extends State<TabletNavbar> {
 
-  var currentpageindex = 0;
+  var currentpageindex = pageIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -177,7 +180,7 @@ class DesktopNavbar extends StatefulWidget {
 
 class _DesktopNavbarState extends State<DesktopNavbar> {
 
-  var currentpageindex = 0;
+  var currentpageindex = pageIndex;
 
   @override
   Widget build(BuildContext context) {

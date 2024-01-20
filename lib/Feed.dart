@@ -4,9 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter/services.dart' as rootBundle;
 import 'package:schluckspecht_app/AppThemes.dart';
 import 'package:http/http.dart' as http;
-
-import 'ErrorCard.dart';
 import 'mycustomappbar.dart';
+import 'dart:io';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter/services.dart' as rootBundle;
+
 
 class Feedpage extends StatelessWidget {
   Feedpage({super.key});
@@ -15,134 +18,222 @@ class Feedpage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.backgroundColor,
       appBar: MyAppBar(title: 'Feed', scaffoldKey: scaffoldKey),
       drawer: MyDrawer(),
-      backgroundColor: Colors.grey[100],
-      body: FutureBuilder(
-        future: readApiData(),
-        builder: (context, data) {
-          if (data.hasError) {
-            return Center(child: CenteredErrorCard(errorCode: "Api Request failed"));
-          } else if (data.hasData) {
-            var items = data.data as List<Posts>;
-            return ListView.builder(
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                return Card(
-                  margin: const EdgeInsets.all(20.0),
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  color: Colors.white,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.all(15.0),
-                        child: Row(
-                          children: [
-                            CircleAvatar(
-                              // Replace with your user's profile image
-                              backgroundImage: AssetImage('assets/Fleig.jpg'),
-                              radius: 20.0,
-                            ),
-                            SizedBox(width: 8.0),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Unser Team', // Replace with user's name
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  '10.12.2023', // Replace with the actual post date
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: FutureBuilder<List<Posts>>(
+          future: fetchData(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Center(child: Text("Error: ${snapshot.error}"));
+            } else if (snapshot.hasData) {
+              var items = snapshot.data!;
+              return ListView.builder(
+                reverse: false,
+                itemCount: items.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                  padding: AppCardStyle.innerPadding,
+                   color: AppColors.backgroundColor,
+                    child: buildPostCard(context, items[index]),
+                     );
+                },
+              );
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget buildPostCard(BuildContext context, Posts post) {
+    final TextPainter textPainter = TextPainter(
+      text: TextSpan(
+        text: post.content ?? '',
+        style: const TextStyle(
+          fontSize: AppTextStyle.regularFontSize,
+          fontWeight: FontWeight.normal,
+        ),
+      ),
+      maxLines: 4,
+      textDirection: TextDirection.ltr,
+    )..layout(maxWidth: MediaQuery.of(context).size.width - 40);
+
+   return Card(
+    color: AppColors.cardColor,
+    elevation: 0,
+    shape: RoundedRectangleBorder(
+    borderRadius: AppCardStyle.cardBorderRadius,
+    ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+          Padding(
+            padding: EdgeInsets.all(16.0),
+            child:
+            Row(
+              children: [
+                CircleAvatar(
+                  // Replace with your user's profile image
+                  backgroundImage: AssetImage('assets/Fleig.jpg'),
+                  radius: 20.0,
+                ),
+                SizedBox(width: 8.0),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Unser Team', // Replace with user's name
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(15.0),
+                    ),
+                    Text(
+                      post.date ?? "",
+                      style: const TextStyle(
+                          color: AppColors.secondaryFontColor,
+                          fontSize: AppTextStyle.smallFontSize),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          
+          Padding( // title
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text(
+              post.title ?? '',
+              style: const TextStyle(
+                fontSize: AppTextStyle.largeFontSize,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+
+          if (post.content != null)
+            Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20, top: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    post.content!,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 4,
+                    style: const TextStyle(
+                      fontSize: AppTextStyle.regularFontSize,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                  if (textPainter.didExceedMaxLines)
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (BuildContext context) {
+                            return SecondPage(post: post);
+                          },
+                        ));
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.only(top: 8, bottom: 8),
                         child: Text(
-                          items[index].title.toString(),
-                          style: const TextStyle(
-                            fontSize: 18,
+                          'Weiterlesen',
+                          style: TextStyle(
+                            fontSize: AppTextStyle.regularFontSize,
+                            color: AppColors.accentFontColor,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
-                      if (items[index].imagePath != null)
-                        AspectRatio(
-                          aspectRatio: 16 / 9,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(5),
-                            child: Image.asset(
-                              items[index].imagePath!,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      if (items[index].content != null)
-                        Padding(
-                          padding: const EdgeInsets.all(15),
-                          child: Text(
-                            items[index].content.toString(),
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.normal,
-                            ),
-                            maxLines: 4,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                            builder: (BuildContext context) {
-                              return SecondPage(post: items[index]);
-                            },
-                          ));
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(15.0),
-                          child: Text(
-                            'Weiterlesen',
-                            style: TextStyle(
-                              color: AppColors.Primaryblue,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            );
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
+                    ),
+                ],
+              ),
+            ),
+
+          if (post.imagePath != null)
+            AspectRatio(
+              aspectRatio: 3 / 2,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(8.0),
+                  bottomRight: Radius.circular(8.0),
+                ),
+                child: Image.asset(
+                  post.imagePath!,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+        ],
       ),
-    );
+    
+  );
   }
 }
 
-Future<List<Posts>>ReadJsonData() async{
-  final jsondata = await rootBundle.rootBundle.loadString('assets/posts.json');
+
+Future<List<Posts>>readLocalJson() async{
+  final jsondata = await rootBundle.rootBundle.loadString('assets/localData/Feed/posts.json');
   final list = json.decode(jsondata) as List<dynamic>;
 
   return list.map((e) => Posts.fromJson(e)).toList();
 }
+
+Future<List<Posts>> fetchData() async {
+  try {
+    List<Posts> posts = await fetchPostsFromApi();
+    await saveToLocal(posts);
+    return posts;
+  } catch (e) {
+    print('API request failed. Trying to load local data...');
+    return readLocalJson();
+  }
+}
+
+Future<void> saveToLocal(List<Posts> posts) async {
+  try {
+    final jsonData = jsonEncode(posts.map((post) => post.toJson()).toList());
+    await writeLocalJson(jsonData, 'assets/localData/Feed/saveToLocal/postsFromApi.json');
+  } catch (e) {
+    print('Error saving data locally: $e');
+  }
+}
+
+Future<void> writeLocalJson(String jsonData, String fileName) async {
+  try {
+    Directory appDocumentsDirectory = await getApplicationDocumentsDirectory();
+    String filePath = '${appDocumentsDirectory.path}/$fileName';
+
+    File file = File(filePath);
+    await file.writeAsString(jsonData);
+
+    print('Data saved to local file: $filePath');
+  } catch (e) {
+    print('Error writing to local file: $e');
+  }
+}
+
+
+Future<List<Posts>> fetchPostsFromApi() async {
+  final response = await http.get(Uri.parse('http://localhost:8080/Feedposts'));
+
+  if (response.statusCode == 200) {
+    final List<dynamic> list = json.decode(response.body);
+    final posts = list.map((e) => Posts.fromJson(e)).toList();
+
+    return posts;
+  } else {
+    throw Exception('Failed to load events');
+  }
+}
+
 
 Future<List<Posts>> readApiData() async {
   try {
@@ -169,6 +260,9 @@ class Posts{
   String? content;
   String? date;
   String? imagePath;
+  String? imageSource;
+  String? source;
+
 
   Posts(
     {
@@ -177,6 +271,8 @@ class Posts{
       this.content,
       this.date,
       this.imagePath,
+      this.imageSource,
+      this.source,
     }
    );
   
@@ -187,8 +283,24 @@ class Posts{
     content=json['content'];
     date=json['date'];
     imagePath=json['imagePath'];
+    imageSource=json['imageSource'];
+    source=json['source'];
     
   }
+
+
+ Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'content': content,
+      'date': date,
+      'imagePath': imagePath,
+      'imageSource': imageSource,
+      'source': source,
+    };
+
+}
 }
 
 
@@ -202,10 +314,12 @@ class SecondPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: AppCardStyle.innerPadding,
         child: SingleChildScrollView(
+          padding: AppCardStyle.cardMargin,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+           
             children: [
               const SizedBox(height: 16),
               Row(
@@ -223,11 +337,28 @@ class SecondPage extends StatelessWidget {
               Text(
                 post.title ?? "",
                 style: const TextStyle(
-                  fontSize: 24,
+                  fontSize: AppTextStyle.titleSize,
                   fontWeight: FontWeight.bold,
                 ),
                 overflow: TextOverflow.visible,
               ),
+
+              Padding(
+                padding: const EdgeInsets.only(top:8.0, bottom:8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                  Text(
+                    post.date ?? "",
+                    style: const TextStyle(
+                      color: AppColors.secondaryFontColor,
+                      fontSize: AppTextStyle.regularFontSize),
+                  ),
+                    
+                  ],
+                ),
+              ),
+
               const SizedBox(height: 16),
               if (post.imagePath != null)
                 AspectRatio(
@@ -237,11 +368,36 @@ class SecondPage extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                 ),
+
+              const SizedBox(height: 16),
+              if (post.imageSource != null)
+              Text(
+                post.imageSource ?? "",
+                style: const TextStyle(
+                  color: AppColors.secondaryFontColor,
+                  fontSize: AppTextStyle.smallFontSize
+                  ),
+                overflow: TextOverflow.visible,
+              ),
+
               const SizedBox(height: 16),
               Text(
                 post.content ?? "",
-                style: const TextStyle(fontSize: 18),
+                style: const TextStyle(
+                  fontSize: AppTextStyle.largeFontSize
+                  ),
                 overflow: TextOverflow.visible,
+              ),
+
+              const SizedBox(height: 16),
+              Text(
+                post.source ?? "",
+                style: const TextStyle(
+                  fontSize: AppTextStyle.smallFontSize,
+                  color: AppColors.secondaryFontColor,
+                  ),
+                overflow: TextOverflow.visible,
+
               ),
             ],
           ),
