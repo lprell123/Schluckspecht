@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import "package:schluckspecht_app/componentsTimeline/my_timeline_tile.dart";
 import 'package:flutter/services.dart' as rootBundle;
 import 'package:schluckspecht_app/mycustomappbar.dart';
@@ -18,9 +20,6 @@ class Historypage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Timeline();
   }
-  
-
-  
 }
 
 class Timeline extends StatefulWidget {
@@ -103,7 +102,13 @@ class _Timeline extends State<Timeline> {
       )
     );
   }
+}
 
+Future<List<Events>>readLocalJson() async{
+  final jsondata = await rootBundle.rootBundle.loadString('assets/localData/History/events.json');
+  final list = json.decode(jsondata) as List<dynamic>;
+
+  return list.map((e) => Events.fromJson(e)).toList();
 }
 
 Future<List<Events>> fetchData() async {
@@ -112,6 +117,29 @@ Future<List<Events>> fetchData() async {
   } catch (e) {
     print('API request failed. Trying to load local data...');
     return ReadJsonData();
+  }
+}
+
+Future<void> saveToLocal(List<Events> posts) async {
+  try {
+    final jsonData = jsonEncode(posts.map((post) => post.toJson()).toList());
+    await writeLocalJson(jsonData, 'assets/localData/Feed/saveToLocal/postsFromApi.json');
+  } catch (e) {
+    print('Error saving data locally: $e');
+  }
+}
+
+Future<void> writeLocalJson(String jsonData, String fileName) async {
+  try {
+    Directory appDocumentsDirectory = await getApplicationDocumentsDirectory();
+    String filePath = '${appDocumentsDirectory.path}/$fileName';
+
+    File file = File(filePath);
+    await file.writeAsString(jsonData);
+
+    print('Data saved to local file: $filePath');
+  } catch (e) {
+    print('Error writing to local file: $e');
   }
 }
 
@@ -132,6 +160,25 @@ Future<List<Events>> fetchEventsFromApi() async {
     return list.map((e) => Events.fromJson(e)).toList();
   } else {
     throw Exception('Failed to load events');
+  }
+}
+
+Future<List<Events>> readApiData() async {
+  try {
+    final response = await http.get(
+      Uri.parse('http://localhost:8080/Timelineposts'),
+      headers: {'Accept': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> list = json.decode(response.body);
+      return list.map((e) => Events.fromJson(e)).toList();
+    } else {
+      throw Exception('Failed to load data');
+    }
+  } catch (error) {
+    print('Error: $error');
+    throw error;
   }
 }
 
@@ -187,6 +234,24 @@ class Events{
 
     content=json['content'];
     imagePath=json['imagePath'];
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'day': day,
+      'month': month,
+      'year': year,
+
+      'country': country,
+      'eventName': eventName,
+      'placement': placement,
+      'title': title,
+      'tags': tags,
+      'content': content,
+      'imagePath': imagePath,
+    };
+
   }
 }
 
