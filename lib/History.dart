@@ -7,6 +7,7 @@ import 'package:schluckspecht_app/mycustomappbar.dart';
 import 'package:http/http.dart' as http;
 import 'AppThemes.dart';
 import 'ErrorCard.dart';
+import 'error_log.dart';
 
 
 class Historypage extends StatelessWidget {
@@ -74,6 +75,7 @@ Future<List<Events>> fetchData() async {
     return await fetchEventsFromApi();
   } catch (e) {
     print('API request failed. Trying to load local data...');
+    ErrorLog().addError(e.toString());
     return ReadJsonData();
   }
 }

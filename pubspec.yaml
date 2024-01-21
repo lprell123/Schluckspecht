@@ -11,6 +11,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_svg: ^2.0.9
   cached_network_image: ^3.2.0
   image: ^3.0.1
   image_picker: ^1.0.7
@@ -36,8 +37,6 @@ flutter:
 
   assets:
 
-    - assets/posts.json
-    - assets/events.json
     - assets/localData/Feed/posts.json
     - assets/localData/Feed/images/Gruppenfoto_2019.jpg
     - assets/localData/Feed/images/Gruppenfoto_2022.webp
