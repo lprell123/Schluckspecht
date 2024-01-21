@@ -126,7 +126,7 @@ Future<List<Events>> fetchData() async {
 Future<void> saveToLocal(List<Events> posts) async {
   try {
     final jsonData = jsonEncode(posts.map((post) => post.toJson()).toList());
-    await writeLocalJson(jsonData, 'assets/localData/Feed/saveToLocal/postsFromApi.json');
+    await writeLocalJson(jsonData, 'assets/localData/History/saveToLocal/eventsFromApi.json');
   } catch (e) {
     print('Error saving data locally: $e');
   }
