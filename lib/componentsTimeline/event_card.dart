@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:schluckspecht_app/AppThemes.dart";
 
 
 class EventCard extends StatelessWidget {
@@ -23,10 +24,10 @@ class EventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       clipBehavior: Clip.hardEdge,
-      margin: EdgeInsets.all(15),
+      margin: AppCardStyle.innerPadding,
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        color: AppColors.cardColor,
+        borderRadius: BorderRadius.circular(AppCardStyle.borderRadiusValue),
       ),
       constraints: const BoxConstraints(
         minHeight: 175,
@@ -39,25 +40,25 @@ class EventCard extends StatelessWidget {
           Expanded ( 
             flex:2,
             child : Container(
-              padding: const EdgeInsets.all(10),
+              padding: AppCardStyle.cardMargin,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   //LAND TURNIER JAHR
-                  Text("$country $eventName $year", style: const TextStyle(color: Colors.grey, fontSize: 10,) ),
+                  Text("$country $eventName $year", style: const TextStyle(color: AppColors.secondaryFontColor, fontSize: AppTextStyle.smallFontSize,) ),
 
                   //PLATZIERUNG TURNIER
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("$placement", style: const TextStyle(fontSize: 19,)),
+                      Text("$placement", style: const TextStyle(fontSize: AppTextStyle.largeFontSize,)),
                       Text("$title"),
                     ],
                   ),
                   
                   //TAGS
-                  Text("$tags", style: const TextStyle(color: Colors.grey, fontSize: 10, backgroundColor: Color.fromARGB(255, 243, 243, 243),) ),
+                  Text("$tags", style: const TextStyle(color: AppColors.secondaryFontColor, fontSize: AppTextStyle.smallFontSize,)),
                 ]
               ),
             ),

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import "package:schluckspecht_app/componentsTimeline/my_timeline_tile.dart";
@@ -7,21 +8,58 @@ import 'package:schluckspecht_app/mycustomappbar.dart';
 import 'package:http/http.dart' as http;
 import 'AppThemes.dart';
 import 'ErrorCard.dart';
+import 'tags.dart';
 import 'error_log.dart';
 
 
+
 class Historypage extends StatelessWidget {
-  Historypage({super.key});
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  const Historypage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    return Timeline();
+  }
+  
+
+  
+}
+
+class Timeline extends StatefulWidget {
+  const Timeline({super.key});
+
+  @override
+  State<Timeline> createState() => _Timeline();
+
+}
+
+class _Timeline extends State<Timeline> {
+
+
+  @override
+  Widget build(BuildContext context) {
+    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       appBar: MyAppBar(title: 'Historie', scaffoldKey: scaffoldKey),
       drawer: MyDrawer(),
+
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: AppColors.cardColor,
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (_) {
+              return PopupDialog();
+            }
+          );
+        },
+        child: const Icon(Icons.filter_alt),
+      ),
+
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        padding: AppCardStyle.innerPadding,
         child: FutureBuilder(
           future: fetchData(),
           builder: (context, data) {
@@ -67,8 +105,8 @@ class Historypage extends StatelessWidget {
       )
     );
   }
-}
 
+}
 
 Future<List<Events>> fetchData() async {
   try {
@@ -176,7 +214,7 @@ class FullText extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+        padding: AppCardStyle.innerPadding,
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -189,7 +227,7 @@ class FullText extends StatelessWidget {
                   //DATUM
                   Text(
                     "$day / $month / $year",
-                    style: const TextStyle(fontSize: 16),
+                    style: const TextStyle(fontSize: AppTextStyle.regularFontSize),
                   ),
                 ],
               ),
@@ -201,7 +239,7 @@ class FullText extends StatelessWidget {
                   Text(
                     event.placement ?? "",
                     style: const TextStyle(
-                      fontSize: 28,
+                      fontSize: AppTextStyle.titleSize,
                       fontWeight: FontWeight.bold,
                     ),
                     overflow: TextOverflow.visible,
@@ -211,9 +249,9 @@ class FullText extends StatelessWidget {
                   Text(
                     event.title ?? "",
                     style: const TextStyle(
-                      fontSize: 24,
+                      fontSize: AppTextStyle.largeFontSize,
                       fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 131, 131, 131),
+                      color: AppColors.accentFontColor,
                     ),
                     overflow: TextOverflow.visible,
                   ),
@@ -231,10 +269,10 @@ class FullText extends StatelessWidget {
                 ),
               const SizedBox(height: 16),
               Padding(
-                padding: const EdgeInsets.only(bottom: 24.0),
+                padding: const EdgeInsets.only(bottom: 15.0),
                 child: Text(
                   event.content ?? "",
-                  style: const TextStyle(fontSize: 18),
+                  style: const TextStyle(fontSize: AppTextStyle.largeFontSize),
                   overflow: TextOverflow.visible,
                 ),
               ),
@@ -246,3 +284,57 @@ class FullText extends StatelessWidget {
   }
 }
 
+class PopupDialog extends StatefulWidget {
+  @override
+  _PopupDialog createState() => new _PopupDialog();
+}
+
+class _PopupDialog extends State<PopupDialog> {
+
+
+  @override 
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Nach Tags filtern'),
+      surfaceTintColor: AppColors.cardColor,
+      content: StatefulBuilder(
+        builder: (context, setState) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+                const SizedBox(height: 8.0),
+                Wrap(
+                  spacing: 8.0,
+                  children: Tags.tags.map((tag) {
+                    return FilterChip(
+                      backgroundColor: AppColors.secondaryGrey,
+                      selectedColor: AppColors.primaryBlue,
+                      showCheckmark: false,
+                      shape: RoundedRectangleBorder(borderRadius: AppCardStyle.cardBorderRadius),
+                      label: Text(tag, 
+                        style: const TextStyle(
+                          fontSize: AppTextStyle.regularFontSize,
+                          color: AppColors.primaryFontColor,
+                        ),
+                      ),
+                      selected: Tags.selectedTags.contains(tag),
+                      onSelected: (selected) {
+                        setState(() {
+                          if(selected) { 
+                            Tags.selectedTags.add(tag);
+                          } else {
+                            Tags.selectedTags.remove(tag);
+                          }
+                        });
+                      }
+                    );
+                  }).toList(),
+                ),
+            ],
+          );
+        }
+      ),
+    );
+  }
+}
