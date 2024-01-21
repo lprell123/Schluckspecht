@@ -307,12 +307,12 @@ class _PopupDialog extends State<PopupDialog> {
                 Wrap(
                   spacing: 8.0,
                   children: Tags.tags.map((tag) {
-                    return FilterChip(
+                    return Padding(padding: EdgeInsets.all(3), child: FilterChip(
                       backgroundColor: AppColors.secondaryGrey,
                       selectedColor: AppColors.primaryBlue,
                       showCheckmark: false,
-                      shape: RoundedRectangleBorder(borderRadius: AppCardStyle.cardBorderRadius),
-                      label: Text(tag, 
+
+                      label: Text(tag,
                         style: const TextStyle(
                           fontSize: AppTextStyle.regularFontSize,
                           color: AppColors.primaryFontColor,
@@ -321,14 +321,14 @@ class _PopupDialog extends State<PopupDialog> {
                       selected: Tags.selectedTags.contains(tag),
                       onSelected: (selected) {
                         setState(() {
-                          if(selected) { 
+                          if(selected) {
                             Tags.selectedTags.add(tag);
                           } else {
                             Tags.selectedTags.remove(tag);
                           }
                         });
                       }
-                    );
+                    ),);
                   }).toList(),
                 ),
             ],

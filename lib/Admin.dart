@@ -9,6 +9,7 @@ class AdminPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Admin Panel'),
       ),
+      backgroundColor: AppColors.backgroundColor,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
