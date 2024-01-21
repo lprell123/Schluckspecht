@@ -471,15 +471,9 @@ packages:
       sha256: "9a96a0a19b594dbc5bf0f1f27d2bc67d5f95957359b461cd9feb44ed6ae75096"
       url: "https://pub.dev"
     source: hosted
+
     version: "6.1.1"
-  rxdart:
-    dependency: transitive
-    description:
-      name: rxdart
-      sha256: "0c7c0cedd93788d996e33041ffecda924cc54389199cde4e6a34b440f50044cb"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.27.7"
+
   shared_preferences:
     dependency: "direct main"
     description:
@@ -621,6 +615,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.0"
+
   timeline_tile:
     dependency: "direct main"
     description:
@@ -629,6 +624,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+
   typed_data:
     dependency: transitive
     description:
@@ -665,10 +661,15 @@ packages:
     dependency: transitive
     description:
       name: win32
+      sha256: "350a11abd2d1d97e0cc7a28a81b781c08002aa2864d9e3f192ca0ffa18b06ed3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.9"
       sha256: b0f37db61ba2f2e9b7a78a1caece0052564d1bc70668156cf3a29d676fe4e574
       url: "https://pub.dev"
     source: hosted
     version: "5.1.1"
+
   xdg_directories:
     dependency: transitive
     description:
@@ -686,5 +687,9 @@ packages:
     source: hosted
     version: "6.3.0"
 sdks:
+  dart: ">=3.1.0-185.0.dev <4.0.0"
+  flutter: ">=3.7.0"
+
   dart: ">=3.1.0 <4.0.0"
   flutter: ">=3.10.0"
+

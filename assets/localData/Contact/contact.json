@@ -1,1 +1,4 @@
-[{"id":1,"name":"Fleig, Claus","position":"CEO","phonenumber":"+49 1704563","email":"maxmuster@web.de","imagePath":"assets/Fleig.jpg"},{"id":2,"name":"Hensel, Stefan","position":"CTO","phonenumber":null,"email":null,"imagePath":"assets/Hensel.jpg"},{"id":3,"name":"Jane Doe","position":"CTO","phonenumber":null,"email":"janedoe@example.com","imagePath":"assets/Hensel.jpg"}]
+
+[{"id":1,"name":"Fleig, Claus","position":"CEO","phonenumber":"+49 1704563","email":"maxmuster@web.de","imagePath":"assets/Fleig.jpg"},
+{"id":2,"name":"Hensel, Stefan","position":"CTO","phonenumber":null,"email":null,"imagePath":"assets/Hensel.jpg"},
+{"id":3,"name":"Jane Doe","position":"CTO","phonenumber":null,"email":"janedoe@example.com","imagePath":"assets/Hensel.jpg"}]
