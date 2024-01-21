@@ -13,6 +13,24 @@ class AdminPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const Text(
+              'Hier können Sie',
+              style: TextStyle(
+                fontSize: 24.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            SizedBox(height: 5.0,),
+            const Text(
+              'Posts erstellen und bearbeiten',
+              style: TextStyle(
+                fontSize: 24.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            SizedBox(height: 20.0,),
             roundedIconButton(
               icon: Icons.home,
               onPressed: () {
@@ -22,6 +40,7 @@ class AdminPage extends StatelessWidget {
                 );
               },
             ),
+            SizedBox(height: 5,),
             Text("Feedpost"),
             SizedBox(height: 16.0), // Spacer
             roundedIconButton(
@@ -30,6 +49,7 @@ class AdminPage extends StatelessWidget {
                 // Navigate to Timelinepost page
               },
             ),
+            SizedBox(height: 5,),
             Text("Kontakteintrag"),
             SizedBox(height: 16.0), // Spacer
             roundedIconButton(
@@ -38,6 +58,7 @@ class AdminPage extends StatelessWidget {
                 // Navigate to Historypost page
               },
             ),
+            SizedBox(height: 5,),
             Text("Historieneintrag"),
           ],
         ),

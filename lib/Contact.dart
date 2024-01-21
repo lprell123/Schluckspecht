@@ -1,9 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'AppThemes.dart';
 import 'ErrorCard.dart';
+import 'error_log.dart';
+import 'error_log.dart';
 import 'mycustomappbar.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -118,7 +121,7 @@ Widget buildContactCard(BuildContext context, Contact contact) {
   ),
 );
 }
-      
+
 
 Future<List<Contact>>readLocalJson() async{
   final jsondata = await rootBundle.rootBundle.loadString('assets/localData/Contact/contact.json');
@@ -135,6 +138,7 @@ Future<List<Contact>> fetchData() async {
     return posts;
   } catch (e) {
     print('API request failed. Trying to load local data...');
+    ErrorLog().addError(e.toString());
     return readLocalJson();
   }
 }
@@ -146,6 +150,7 @@ Future<void> saveToLocal(List<Contact> posts) async {
     await writeLocalJson(jsonData, 'assets/localData/Contact/saveToLocal/contactsFromApi.json');
   } catch (e) {
     print('Error saving data locally: $e');
+    ErrorLog().addError(e.toString());
   }
 }
 
@@ -161,6 +166,7 @@ Future<void> writeLocalJson(String jsonData, String fileName) async {
     print('Data saved to local file: $filePath');
   } catch (e) {
     print('Error writing to local file: $e');
+    ErrorLog().addError(e.toString());
   }
 }
 

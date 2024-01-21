@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'error_log.dart';
 import 'navbar.dart';
 import 'package:provider/provider.dart';
 import 'package:schluckspecht_app/AppThemes.dart';
@@ -23,7 +24,14 @@ class HexColor extends Color {
 
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ErrorLog()),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 
@@ -35,6 +43,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Schluckspecht',
       color: AppColors.backgroundColor,
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
         textTheme: GoogleFonts.robotoTextTheme().copyWith(
