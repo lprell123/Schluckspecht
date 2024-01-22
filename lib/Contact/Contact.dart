@@ -1,15 +1,20 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'dart:convert';
-import 'AppThemes.dart';
-import 'ErrorCard.dart';
-import 'mycustomappbar.dart';
+import '../AppThemes.dart';
+import '../Navigation/Drawer/Components/ErrorCard.dart';
+import '../Navigation/Drawer/Components/error_log.dart';
+import '../Navigation/Drawer/Components/error_log.dart';
+import '../Navigation/mycustomappbar.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart' as rootBundle;
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
+
+import '../config.dart';
 
 
 class Contactpage extends StatelessWidget {
@@ -118,7 +123,7 @@ Widget buildContactCard(BuildContext context, Contact contact) {
   ),
 );
 }
-      
+
 
 Future<List<Contact>>readLocalJson() async{
   final jsondata = await rootBundle.rootBundle.loadString('assets/localData/Contact/contact.json');
@@ -135,6 +140,7 @@ Future<List<Contact>> fetchData() async {
     return posts;
   } catch (e) {
     print('API request failed. Trying to load local data...');
+    ErrorLog().addError(e.toString());
     return readLocalJson();
   }
 }
@@ -146,6 +152,7 @@ Future<void> saveToLocal(List<Contact> posts) async {
     await writeLocalJson(jsonData, 'assets/localData/Contact/saveToLocal/contactsFromApi.json');
   } catch (e) {
     print('Error saving data locally: $e');
+    ErrorLog().addError(e.toString());
   }
 }
 
@@ -161,12 +168,13 @@ Future<void> writeLocalJson(String jsonData, String fileName) async {
     print('Data saved to local file: $filePath');
   } catch (e) {
     print('Error writing to local file: $e');
+    ErrorLog().addError(e.toString());
   }
 }
 
 
 Future<List<Contact>> fetchPostsFromApi() async {
-  final response = await http.get(Uri.parse('http://localhost:8080/Feedposts'));
+  final response = await http.get(Uri.parse('${myConfig.serverUrl}/Feedposts'));
 
   if (response.statusCode == 200) {
     final List<dynamic> list = json.decode(response.body);

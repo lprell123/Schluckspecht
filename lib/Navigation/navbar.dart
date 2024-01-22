@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:schluckspecht_app/Contact.dart';
-import 'package:schluckspecht_app/Feed.dart';
-import 'package:schluckspecht_app/History.dart';
-import 'package:schluckspecht_app/themes.dart';
+import 'package:schluckspecht_app/AppThemes.dart';
+import 'package:schluckspecht_app/Contact/Contact.dart';
+import 'package:schluckspecht_app/Feed/Feed.dart';
+import 'package:schluckspecht_app/Timeline/History.dart';
 
 
 int pageIndex=0;
@@ -44,7 +44,7 @@ class _MobileNavbarState extends State<MobileNavbar> {
         page = Feedpage();
         break;
       case 2:
-        page = Historypage();
+        page = const Historypage();
         break;
       default:
         throw UnimplementedError('no widget selected');
@@ -60,7 +60,7 @@ class _MobileNavbarState extends State<MobileNavbar> {
         ),
         child: BottomNavigationBar(
           currentIndex: currentpageindex,
-          selectedItemColor: accentColor,
+          selectedItemColor: AppColors.primaryRed,
           unselectedItemColor: Colors.grey,
           onTap: (int index) {
             setState(() {
@@ -70,7 +70,7 @@ class _MobileNavbarState extends State<MobileNavbar> {
           showSelectedLabels: false,
           showUnselectedLabels: false,
           type: BottomNavigationBarType.fixed,
-          items: [
+          items: const [
             BottomNavigationBarItem(
               icon: icononeselected,
               label: '',
@@ -115,7 +115,7 @@ class _TabletNavbarState extends State<TabletNavbar> {
         page = Contactpage();
         break;
       case 2:
-        page = Historypage();
+        page = const Historypage();
         break;
       default:
         throw UnimplementedError('no widget selected');
@@ -130,7 +130,7 @@ class _TabletNavbarState extends State<TabletNavbar> {
                   child: NavigationRail(
                     backgroundColor: Colors.white,
                     extended: constraints.maxWidth >= 750,
-                    indicatorColor: accentColor.withOpacity(0.6),
+                    indicatorColor: Colors.white,
                     selectedIndex: currentpageindex,
                     labelType: NavigationRailLabelType.selected,
                     onDestinationSelected: (int index) {
@@ -194,7 +194,7 @@ class _DesktopNavbarState extends State<DesktopNavbar> {
         page = Contactpage();
         break;
       case 2:
-        page = Historypage();
+        page = const Historypage();
         break;
       default:
         throw UnimplementedError('no widget selected');
@@ -203,16 +203,12 @@ class _DesktopNavbarState extends State<DesktopNavbar> {
     return LayoutBuilder(
         builder: (context, constraints) {
           return Scaffold(
-            appBar: AppBar(
-              backgroundColor: Theme.of(context).colorScheme.background,
-              title: const Text('Schluckspecht'),
-            ),
             body: Row(
               children: [
                 SafeArea(
                   child: NavigationRail(
                     backgroundColor: Colors.white,
-                    indicatorColor: accentColor.withOpacity(0),
+                    indicatorColor: AppColors.primaryRed.withOpacity(0),
                     selectedIndex: currentpageindex,
                     extended: constraints.maxWidth >= 750,
                     onDestinationSelected: (int index) {

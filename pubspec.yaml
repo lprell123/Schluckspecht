@@ -11,6 +11,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_svg: ^2.0.9
   cached_network_image: ^3.2.0
   image: ^3.0.1
   image_picker: ^1.0.7
@@ -36,19 +37,14 @@ flutter:
 
   assets:
 
-    - assets/posts.json
-    - assets/events.json
     - assets/localData/Feed/posts.json
     - assets/localData/Feed/images/Gruppenfoto_2019.jpg
     - assets/localData/Feed/images/Gruppenfoto_2022.webp
     - assets/localData/Feed/images/Gruppenfoto_Berghem.webp
     - assets/localData/Feed/images/Gruppenfoto_Indien.webp
-    - assets/localData/History/events.json
     - assets/localData/Contact/contact.json
     - assets/images/
     - assets/Fleig.jpg
-    - assets/Hensel.jpg
     - assets/HOLogo.png
-    - assets/Schluckspecht_Logo2.png
     - assets/logo1.png
     - assets/appbarheaderimage.png

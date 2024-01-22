@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
-import "package:schluckspecht_app/componentsTimeline/event_card.dart";
-import "package:schluckspecht_app/componentsTimeline/date_card.dart";
+import "package:schluckspecht_app/Timeline/componentsTimeline/event_card.dart";
+import "package:schluckspecht_app/Timeline/componentsTimeline/date_card.dart";
 import 'package:timeline_tile/timeline_tile.dart';
 
 class MyTimelineTile extends StatelessWidget {

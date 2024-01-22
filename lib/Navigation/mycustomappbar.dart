@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:schluckspecht_app/Adminform/Loginform.dart';
+import 'package:schluckspecht_app/Navigation/Drawer/Components/Aboutus.dart';
+import 'package:schluckspecht_app/Admin/Loginform.dart';
 import 'package:schluckspecht_app/AppThemes.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:schluckspecht_app/Navigation/Drawer/Components/error_log_page.dart';
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -110,26 +112,25 @@ class _MyDrawerState extends State<MyDrawer> {
                         fontWeight: FontWeight.w900)),
               ),
             ),
-            ExpansionTile(
-              leading: Icon(Icons.settings),
-              title: Text('Settings'),
-              children: [
-                ListTile(
-                  title: Text('Displaymode'),
-                  trailing: Switch(
-                    value: isDarkMode,
-                    onChanged: (value) {
-                      setState(() {
-                        isDarkMode = value;
-                      });
-                    },
-                    activeColor: AppColors.primaryRed, // Color when the switch is ON
-                    activeTrackColor: Colors.grey[100], // Color of the track when the switch is ON
-                    inactiveThumbColor: AppColors.primaryBlue, // Color of the thumb when the switch is OFF
-                    inactiveTrackColor: Colors.grey[100], // Color of the track when the switch is OFF
-                  ),
-                ),
-              ],
+            ListTile(
+              leading: const Icon(Icons.account_box_outlined),
+              title: const Text('Über uns'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AboutUsPage()),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.error_outlined),
+              title: Text('Error page'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ErrorLogPage()),
+                );
+              },
             ),
             ListTile(
               leading: Icon(Icons.admin_panel_settings),

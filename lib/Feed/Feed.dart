@@ -4,11 +4,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter/services.dart' as rootBundle;
 import 'package:schluckspecht_app/AppThemes.dart';
 import 'package:http/http.dart' as http;
-import 'mycustomappbar.dart';
+import '../Navigation/Drawer/Components/error_log.dart';
+import '../Navigation/mycustomappbar.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/services.dart' as rootBundle;
+
+import '../config.dart';
 
 
 class Feedpage extends StatelessWidget {
@@ -74,22 +77,22 @@ class Feedpage extends StatelessWidget {
         children: [
 
           Padding(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             child:
             Row(
               children: [
                 CircleAvatar(
-                  // Replace with your user's profile image
-                  backgroundImage: AssetImage('assets/Fleig.jpg'),
+                  // Load AdminImage here using the AdminImage URL
+                  backgroundImage: AssetImage(post.AdminImage ?? ""),
                   radius: 20.0,
                 ),
-                SizedBox(width: 8.0),
+                const SizedBox(width: 8.0),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Unser Team', // Replace with user's name
-                      style: TextStyle(
+                      post.AdminName ?? "",
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -193,6 +196,7 @@ Future<List<Posts>> fetchData() async {
     return posts;
   } catch (e) {
     print('API request failed. Trying to load local data...');
+    ErrorLog().addError(e.toString());
     return readLocalJson();
   }
 }
@@ -203,6 +207,7 @@ Future<void> saveToLocal(List<Posts> posts) async {
     await writeLocalJson(jsonData, 'assets/localData/Feed/saveToLocal/postsFromApi.json');
   } catch (e) {
     print('Error saving data locally: $e');
+    ErrorLog().addError(e.toString());
   }
 }
 
@@ -217,12 +222,13 @@ Future<void> writeLocalJson(String jsonData, String fileName) async {
     print('Data saved to local file: $filePath');
   } catch (e) {
     print('Error writing to local file: $e');
+    ErrorLog().addError(e.toString());
   }
 }
 
 
 Future<List<Posts>> fetchPostsFromApi() async {
-  final response = await http.get(Uri.parse('http://localhost:8080/Feedposts'));
+  final response = await http.get(Uri.parse('${myConfig.serverUrl}/Feedposts'));
 
   if (response.statusCode == 200) {
     final List<dynamic> list = json.decode(response.body);
@@ -238,7 +244,7 @@ Future<List<Posts>> fetchPostsFromApi() async {
 Future<List<Posts>> readApiData() async {
   try {
     final response = await http.get(
-      Uri.parse('http://localhost:8080/Feedposts'),
+      Uri.parse('${myConfig.serverUrl}/Feedposts'),
       headers: {'Accept': 'application/json'},
     );
 
@@ -250,6 +256,7 @@ Future<List<Posts>> readApiData() async {
     }
   } catch (error) {
     print('Error: $error');
+    ErrorLog().addError(error.toString());
     throw error;
   }
 }
@@ -262,6 +269,8 @@ class Posts{
   String? imagePath;
   String? imageSource;
   String? source;
+  String? AdminImage;
+  String? AdminName;
 
 
   Posts(
@@ -273,6 +282,8 @@ class Posts{
       this.imagePath,
       this.imageSource,
       this.source,
+      this.AdminImage,
+      this.AdminName,
     }
    );
   
@@ -285,7 +296,8 @@ class Posts{
     imagePath=json['imagePath'];
     imageSource=json['imageSource'];
     source=json['source'];
-    
+    AdminImage=json['AdminImage'];
+    AdminName=json['AdminName'];
   }
 
 
@@ -298,9 +310,10 @@ class Posts{
       'imagePath': imagePath,
       'imageSource': imageSource,
       'source': source,
+      'AdminImage': AdminImage,
+      'AdminName' : AdminName,
     };
-
-}
+  }
 }
 
 
