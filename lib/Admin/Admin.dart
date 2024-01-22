@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:schluckspecht_app/Adminform/Feedpostform.dart';
+import 'package:schluckspecht_app/Admin/forms/Feedpostform.dart';
 import 'package:schluckspecht_app/AppThemes.dart';
 
 class AdminPage extends StatelessWidget {

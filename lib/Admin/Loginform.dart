@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:schluckspecht_app/Admin.dart';
+import 'package:schluckspecht_app/Admin/Admin.dart';
 import 'package:schluckspecht_app/AppThemes.dart';
 
-import '../error_log.dart';
+import '../Navigation/Drawer/Components/error_log.dart';
+import '../config.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -24,7 +25,7 @@ class _LoginFormState extends State<LoginForm> {
     String username = usernameController.text;
     String password = passwordController.text;
 
-    String apiUrl = 'http://localhost:8080/login';
+    String apiUrl = '${myConfig.serverUrl}/login';
 
     try {
 

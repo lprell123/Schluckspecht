@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:schluckspecht_app/Aboutus.dart';
-import 'package:schluckspecht_app/Adminform/Loginform.dart';
+import 'package:schluckspecht_app/Navigation/Drawer/Components/Aboutus.dart';
+import 'package:schluckspecht_app/Admin/Loginform.dart';
 import 'package:schluckspecht_app/AppThemes.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:schluckspecht_app/error_log_page.dart';
+import 'package:schluckspecht_app/Navigation/Drawer/Components/error_log_page.dart';
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;

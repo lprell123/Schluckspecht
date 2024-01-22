@@ -2,14 +2,16 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import "package:schluckspecht_app/componentsTimeline/my_timeline_tile.dart";
+import "package:schluckspecht_app/Timeline/componentsTimeline/my_timeline_tile.dart";
 import 'package:flutter/services.dart' as rootBundle;
-import 'package:schluckspecht_app/mycustomappbar.dart';
+import 'package:schluckspecht_app/Navigation/mycustomappbar.dart';
 import 'package:http/http.dart' as http;
-import 'AppThemes.dart';
-import 'ErrorCard.dart';
-import 'tags.dart';
-import 'error_log.dart';
+import 'package:schluckspecht_app/config.dart';
+import '../AppThemes.dart';
+import '../Navigation/Drawer/Components/ErrorCard.dart';
+import 'componentsTimeline/tags.dart';
+import '../Navigation/Drawer/Components/error_log.dart';
+import 'componentsTimeline/my_timeline_tile.dart';
 
 
 
@@ -20,9 +22,6 @@ class Historypage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Timeline();
   }
-  
-
-  
 }
 
 class Timeline extends StatefulWidget {
@@ -112,7 +111,7 @@ Future<List<Events>> fetchData() async {
   try {
     return await fetchEventsFromApi();
   } catch (e) {
-    print('API request failed. Trying to load local data...');
+    print('API request failed for History. Trying to load local data...');
     ErrorLog().addError(e.toString());
     return ReadJsonData();
   }
@@ -120,7 +119,8 @@ Future<List<Events>> fetchData() async {
 
 
 Future<List<Events>>ReadJsonData() async{
-  final jsondata = await rootBundle.rootBundle.loadString('assets/localData/History/events.json');
+  print('reading local JSON');
+  final jsondata = await rootBundle.rootBundle.loadString('localData/History/events.json');
   final list = json.decode(jsondata) as List<dynamic>;
 
   return list.map((e) => Events.fromJson(e)).toList();
@@ -128,7 +128,7 @@ Future<List<Events>>ReadJsonData() async{
 
 
 Future<List<Events>> fetchEventsFromApi() async {
-  final response = await http.get(Uri.parse('http://localhost:8080/Timelineposts'));
+  final response = await http.get(Uri.parse('${myConfig.serverUrl}/Timelineposts'));
 
   if (response.statusCode == 200) {
     final List<dynamic> list = json.decode(response.body);

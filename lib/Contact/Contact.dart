@@ -3,16 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'dart:convert';
-import 'AppThemes.dart';
-import 'ErrorCard.dart';
-import 'error_log.dart';
-import 'error_log.dart';
-import 'mycustomappbar.dart';
+import '../AppThemes.dart';
+import '../Navigation/Drawer/Components/ErrorCard.dart';
+import '../Navigation/Drawer/Components/error_log.dart';
+import '../Navigation/Drawer/Components/error_log.dart';
+import '../Navigation/mycustomappbar.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart' as rootBundle;
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
+
+import '../config.dart';
 
 
 class Contactpage extends StatelessWidget {
@@ -172,7 +174,7 @@ Future<void> writeLocalJson(String jsonData, String fileName) async {
 
 
 Future<List<Contact>> fetchPostsFromApi() async {
-  final response = await http.get(Uri.parse('http://localhost:8080/Feedposts'));
+  final response = await http.get(Uri.parse('${myConfig.serverUrl}/Feedposts'));
 
   if (response.statusCode == 200) {
     final List<dynamic> list = json.decode(response.body);

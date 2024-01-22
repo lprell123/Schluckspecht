@@ -4,12 +4,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter/services.dart' as rootBundle;
 import 'package:schluckspecht_app/AppThemes.dart';
 import 'package:http/http.dart' as http;
-import 'error_log.dart';
-import 'mycustomappbar.dart';
+import '../Navigation/Drawer/Components/error_log.dart';
+import '../Navigation/mycustomappbar.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/services.dart' as rootBundle;
+
+import '../config.dart';
 
 
 class Feedpage extends StatelessWidget {
@@ -226,7 +228,7 @@ Future<void> writeLocalJson(String jsonData, String fileName) async {
 
 
 Future<List<Posts>> fetchPostsFromApi() async {
-  final response = await http.get(Uri.parse('http://localhost:8080/Feedposts'));
+  final response = await http.get(Uri.parse('${myConfig.serverUrl}/Feedposts'));
 
   if (response.statusCode == 200) {
     final List<dynamic> list = json.decode(response.body);
@@ -242,7 +244,7 @@ Future<List<Posts>> fetchPostsFromApi() async {
 Future<List<Posts>> readApiData() async {
   try {
     final response = await http.get(
-      Uri.parse('http://localhost:8080/Feedposts'),
+      Uri.parse('${myConfig.serverUrl}/Feedposts'),
       headers: {'Accept': 'application/json'},
     );
 
