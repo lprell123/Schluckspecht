@@ -13,6 +13,7 @@ class EventCard extends StatelessWidget {
 
   String? content;
   String? imagePath;
+
   
 
 

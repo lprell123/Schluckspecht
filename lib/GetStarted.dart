@@ -48,7 +48,7 @@ class _GetStartedState extends State<GetStarted> {
                   // GET STARTED
                   ?  ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context, MaterialPageRoute(
                             builder: (context) {
                               return OpenMainpage();

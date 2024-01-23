@@ -6,7 +6,7 @@ class Tags {
     'virtual-league',
     'Verbrenner',
     'Elektro',
-    'Stirling Batterie',
+    'Stirling',
     'Schluckspecht-1',
     'Schluckspecht-2',
     'Schluckspecht-3',

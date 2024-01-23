@@ -71,7 +71,7 @@
         "event": "Demonstrationsfahrt",
         "placement": "Erstmaliger Einsatz",
         "title": "… eines Stirling-Motors",
-        "tags": "Stirling Batterie",
+        "tags": "Stirling",
 
         "content": "Klassische Elektrofahrzeuge haben eine begrenzte Reichweite. An der Hochschule Offenburg werden verschiedene Möglichkeiten untersucht, die Reichweite von Elektrofahrzeugen zu vergrößern. Eine Möglichkeit ist, mit einem „Range Extender“ die Batterien während der Fahrt aufzuladen. Dazu werden üblicherweise Ottomotoren eingesetzt, sie erzeugen über Generatoren Strom zum Aufladen der Batterien. Solche Ottomotoren haben einen begrenzten Wirkungsgrad. Den besten erreichbaren Wirkungsgrad hat ein Stirlingmotor, in dem über komplizierte thermodynamische Vorgänge Wärme in Strom umgewandelt wird. Allerdings ist ein Stirlingmotor wesentlich aufwändiger und schwerer als ein Ottomotor, er hat bis jetzt noch keine Anwendung im Automobilsektor gefunden. Viele meinen, dass diese Technik zu schwer und zu komplex ist. Dass es trotzdem geht, haben jetzt Studierende der Hochschule Offenburg gezeigt.",
         "imagePath": "assets/images/2012_Stirling.jpg"
@@ -86,7 +86,7 @@
         "event": "Solar Challenge",
         "placement": "Weltrekord",
         "title": "1631,5 Kilometer mit einer Batterieladung",
-        "tags": "Stirling Batterie",
+        "tags": "Stirling",
 
         "content": "Mit diesem Weltrekord knüpft das Team an die erfolgreiche Teilnahme an der South-African Solar Challenge 2010 an, bei der 626,6 Kilometer erreicht wurden. Damals fuhr der Schluckspecht auf öffentlichen Straßen weiter als jedes andere Fahrzeug zuvor. Der Rekord ist nicht nur darauf zurückzuführen, dass das Fahrzeug ein einsitziges Experimentalfahrzeug ohne viel Komfort ist, sondern auch darauf, dass dieses Fahrzeug von Anfang an als Batteriefahrzeug konzipiert worden ist. Mit dem an der Hochschule Offenburg entwickelten Batteriemanagementsystem wurde die Last optimal auf die 14 Lithium-Cobalt-Batterieblöcke verteilt. So konnte der aktuelle Rekord des derzeitige Weltrekordinhaber, das Team des Japan Electric Vehicle Clubs, von 1003 km mit den erzielten 1631,5 km deutlich überboten werden, obwohl die Batteriekapazität nur bei 23 kWh lag und die Durchschnittsgeschwindigkeit bei 45 km/h (zum Vergleich: die Batteriekapazität des japanischen Teams lag bei 50 kWh, die Durchschnittsgeschwindigkeit bei 40 km/h).",
         "imagePath": "assets/images/2011_Africa.jpg"
