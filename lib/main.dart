@@ -190,19 +190,15 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
-     checkFirstTime().then((isFirstTime) {
-      Future.delayed(Duration(seconds: 5), () {
+     Future.delayed(Duration(seconds: 5), () {
       setState(() {
         isLoading = false;
       });
-     });
     
-      if(isFirstTime) {
-        Navigator.push(
+      Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => GetStarted()),
       );
-      }
       
     });
   }
@@ -230,14 +226,4 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     });
   }
-}
-
-Future<bool> checkFirstTime() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  return prefs.getBool('firstTime') ?? true;
-}
-
-Future<void> setFirstTimeFlag(bool value) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setBool('firstTime', value);
 }
