@@ -378,10 +378,7 @@ class _PopupDialog extends State<PopupDialog> {
                       showCheckmark: false,
                       shape: RoundedRectangleBorder(borderRadius: AppCardStyle.cardBorderRadius),
                       label: Text(tag, 
-                        style: const TextStyle(
-                          fontSize: AppTextStyle.regularFontSize,
-                          color: AppColors.primaryFontColor,
-                        ),
+                        style: getTagTextStyle(tag),
                       ),
                       selected: Tags.selectedTags.contains(tag),
                       onSelected: (selected) {
@@ -402,4 +399,13 @@ class _PopupDialog extends State<PopupDialog> {
       ),
     );
   }
+}
+
+TextStyle getTagTextStyle(String tag) {
+  return TextStyle(
+    fontSize: AppTextStyle.regularFontSize,
+    color: Tags.selectedTags.contains(tag)
+        ? Colors.white
+        : AppColors.primaryFontColor,
+  );
 }

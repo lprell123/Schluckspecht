@@ -66,7 +66,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
             width: 50,
             height: 50,
             child: Image.asset(
-              'assets/Logo1.png',
+              'assets/logo1.png',
               fit: BoxFit.contain,
             ),
           ),

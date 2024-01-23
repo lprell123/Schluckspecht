@@ -1,12 +1,18 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:schluckspecht_app/Feed.dart';
+import 'package:schluckspecht_app/GetStarted.dart';
 import 'error_log.dart';
 import 'navbar.dart';
 import 'package:provider/provider.dart';
 import 'package:schluckspecht_app/AppThemes.dart';
 import 'themes.dart';
 import 'package:schluckspecht_app/themes.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 
 // Hex Color function
@@ -23,7 +29,7 @@ class HexColor extends Color {
 }
 
 
-void main() {
+void main()  {
   runApp(
     MultiProvider(
       providers: [
@@ -152,6 +158,30 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+class Test extends StatefulWidget {
+  const Test({super.key});
+
+  @override
+  State<Test> createState() => _TestState();
+}
+
+class _TestState extends State<Test> {
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(builder: (context, constraints) {
+      if (constraints.maxWidth >= 750) {
+        return const DesktopNavbar();
+      } else if (constraints.maxWidth >= 600) {
+        return const TabletNavbar();
+      } else {
+        return MobileNavbar();
+      }
+      
+    });
+    
+  }
+}
+
 
 class _MyHomePageState extends State<MyHomePage> {
   bool isLoading = true;
@@ -164,6 +194,12 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         isLoading = false;
       });
+      
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => GetStarted()),
+      );
     });
   }
 
@@ -176,13 +212,16 @@ class _MyHomePageState extends State<MyHomePage> {
         return const TabletNavbar();
       } else {
         return isLoading
-            ? Center(
-          child: CachedNetworkImage(
-            imageUrl: '',
-            placeholder: (context, url) => Image.asset('Preloader.gif'),
-            errorWidget: (context, url, error) => Image.asset('Preloader.gif', width: 200, height: 200,),
-          ),
-        )
+            ? Container(
+              color: Colors.white,
+                child: Center(
+                  child: CachedNetworkImage(
+                    imageUrl: '',
+                    placeholder: (context, url) => Image.asset('assets/Preloader.gif'),
+                    errorWidget: (context, url, error) => Image.asset('assets/Preloader.gif', width: 200, height: 200,),
+                  ),
+                ),
+              )
             : const MobileNavbar();
       }
     });

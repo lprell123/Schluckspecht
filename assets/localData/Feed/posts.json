@@ -7,7 +7,7 @@
     "imagePath": "assets/localData/Feed/images/Gruppenfoto_2019.jpg",
     "imageSource":"Foto: © Hochschule Offenburg",
     "source": "Quelle: wwww.schluckspecht.hs-offenburg.de",
-    "AdminImage": "Fleig.jpg",
+    "AdminImage": "assets/Fleig.jpg",
     "AdminName" : "Claus Fleig"
   },
 
@@ -19,7 +19,7 @@
     "imagePath":"assets/localData/Feed/images/Gruppenfoto_2022.webp",
     "imageSource":"Foto: © Hochschule Offenburg",
     "source": "Quelle: wwww.schluckspecht.hs-offenburg.de",
-    "AdminImage": "Fleig.jpg",
+    "AdminImage": "assets/Fleig.jpg",
     "AdminName" : "Claus Fleig"
   },
 
@@ -31,7 +31,7 @@
     "imagePath":"assets/localData/Feed/images/Gruppenfoto_Berghem.webp",
     "imageSource":"Foto: © Shell Eco-Marathon",
     "source": "Quelle: wwww.schluckspecht.hs-offenburg.de",
-    "AdminImage": "Fleig.jpg",
+    "AdminImage": "assets/Fleig.jpg",
     "AdminName" : "Claus Fleig"
   },
 
@@ -43,7 +43,7 @@
     "imagePath":"assets/localData/Feed/images/Gruppenfoto_Indien.webp",
     "imageSource":"Foto: © Hochschule Offenburg",
     "source": "Quelle: wwww.schluckspecht.hs-offenburg.de",
-    "AdminImage": "Fleig.jpg",
+    "AdminImage": "assets/Fleig.jpg",
     "AdminName" : "Claus Fleig"
   }
 ]

@@ -53,3 +53,7 @@ flutter:
     - assets/Schluckspecht_Logo2.png
     - assets/logo1.png
     - assets/appbarheaderimage.png
+    - assets/images/GetStarted/Screen1/
+    - assets/images/GetStarted/Screen2/
+    - assets/images/GetStarted/Screen3/
+    - assets/Preloader.gif

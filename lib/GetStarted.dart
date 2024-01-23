@@ -1,6 +1,8 @@
+import 'package:schluckspecht_app/Feed.dart';
 import 'package:schluckspecht_app/GetStartedPages/page1.dart';
 import 'package:schluckspecht_app/GetStartedPages/page2.dart';
 import 'package:schluckspecht_app/GetStartedPages/page3.dart';
+import 'package:schluckspecht_app/main.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'AppThemes.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +25,7 @@ class _GetStartedState extends State<GetStarted> {
     return Scaffold(
       body: Stack(
         children: [
+          
           PageView(
             onPageChanged: (index) {
               setState(() {
@@ -37,50 +40,91 @@ class _GetStartedState extends State<GetStarted> {
             ],
           ),
           
-          Container(
-            alignment: Alignment(0, 0.75),
-            child: Row (
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                // SKIP
-                GestureDetector(
-                  onTap: () {
-                    _controller.jumpToPage(2);
-                  },
-                  child: Text('SKIP'),),
-                
-                // INDICATOR DOTS
-                SmoothPageIndicator(controller: _controller, count: 3),
-
-                onLastPage
-                  ?  GestureDetector(
-                      onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) {
-                          return HomePage();
-                        }));
-                      },
-                      child: Text('done'),
-                    )
-                  :  GestureDetector(
-                      onTap: () {
-                      _controller.nextPage(duration: Duration(microseconds: 500), curve: Curves.easeIn,);
-                      },
-                      child: Text('>'),
-                    )
-
-                // NEXT PAGE
-               
-                
-              ],
-            )
-
           
-          )
-           
+          Container(
+            alignment: const Alignment(0, 0.9),
+            child: 
+                onLastPage
+                  // GET STARTED
+                  ?  ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context, MaterialPageRoute(
+                            builder: (context) {
+                              return Test();
+                           },   
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(AppCardStyle.borderRadiusValue),
+                        ),
+                        backgroundColor: AppColors.primaryRed, 
+                        minimumSize: Size(300, 40),
+                      ),
+                      child: const Text(
+                        'Get Started',
+                        style: TextStyle(color: Colors.white, fontSize: AppTextStyle.largeFontSize), 
+                      ),
+                    )
+
+                    // BOTTOM BAR
+                  :  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+
+                        //SKIP
+                        GestureDetector(
+                           onTap: () {
+                            _controller.animateToPage(
+                              2,
+                              duration: const Duration(milliseconds: 500), 
+                              curve: Curves.easeInOut,  
+                            );
+                            
+                          },
+                          child: const Text(
+                            'Skip',
+                            style: TextStyle(
+                              color: AppColors.secondaryFontColor,
+                              fontSize: AppTextStyle.largeFontSize,
+                            ),
+                          ),
+                        ),
+                
+                        // INDICATOR DOTS
+                        SmoothPageIndicator(
+                          controller: _controller, 
+                          count: 3,
+                          effect: ExpandingDotsEffect(
+                            spacing:  10.0,  
+                            dotWidth:  10.0,  
+                            dotHeight:  10.0,   
+                            dotColor:  AppColors.secondaryFontColor,  
+                            activeDotColor:  AppColors.primaryRed, 
+                          ),
+                        ),
+
+                         // NEXT PAGE
+                        TextButton(
+                          onPressed: () { 
+                            _controller.nextPage(
+                              duration: const Duration(milliseconds: 500), 
+                              curve: Curves.easeInOut,
+                            );
+                          },
+                          child: Icon(
+                            Icons.navigate_next,
+                            color: AppColors.primaryRed,
+                            size: 35,
+                          )
+                        ),
+                      ],
+                    )
+          )                     
         ],
       )
-
-      
     );
   }
 }
