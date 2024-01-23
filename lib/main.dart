@@ -158,14 +158,14 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class Test extends StatefulWidget {
-  const Test({super.key});
+class OpenMainpage extends StatefulWidget {
+  const OpenMainpage({super.key});
 
   @override
-  State<Test> createState() => _TestState();
+  State<OpenMainpage> createState() => _OpenMainpageState();
 }
 
-class _TestState extends State<Test> {
+class _OpenMainpageState extends State<OpenMainpage> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
@@ -190,16 +190,20 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
-    Future.delayed(Duration(seconds: 5), () {
+     checkFirstTime().then((isFirstTime) {
+      Future.delayed(Duration(seconds: 5), () {
       setState(() {
         isLoading = false;
       });
-      
-
-      Navigator.push(
+     });
+    
+      if(isFirstTime) {
+        Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => GetStarted()),
       );
+      }
+      
     });
   }
 
@@ -226,4 +230,14 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     });
   }
+}
+
+Future<bool> checkFirstTime() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getBool('firstTime') ?? true;
+}
+
+Future<void> setFirstTimeFlag(bool value) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setBool('firstTime', value);
 }

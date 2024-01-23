@@ -30,10 +30,14 @@ class Timeline extends StatefulWidget {
   @override
   State<Timeline> createState() => _Timeline();
 
+  
+
 }
 
 class _Timeline extends State<Timeline> {
-
+  Future<void> refreshTimeline() async {
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +54,7 @@ class _Timeline extends State<Timeline> {
           showDialog(
             context: context,
             builder: (_) {
-              return PopupDialog();
+              return PopupDialog(onDialogClose: refreshTimeline);
             }
           );
         },
@@ -67,32 +71,42 @@ class _Timeline extends State<Timeline> {
             }
             else if (data.hasData) {
               var items = data.data as List<Events>;
+              
               return ListView.builder(
                 itemCount: items.length,
                 itemBuilder: (context, index) {
-                  return InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (BuildContext context) {
-                          return FullText(event: items[index]);
-                        },
-                      ));
-                    },
-                    child: MyTimelineTile(
-                      items[index].id, 
-                      items[index].day,
-                      items[index].month, 
-                      items[index].year, 
-                      items[index].country, 
-                      items[index].eventName, 
-                      items[index].placement, 
-                      items[index].title, 
-                      items[index].tags, 
-                      items[index].content, 
-                      items[index].imagePath,
-                    ),
-                  );
-                  
+
+                   // Überprüfen, ob mindestens ein ausgewählter Tag mit einem Tag des aktuellen Elements übereinstimmt
+                  bool shouldShowItem = Tags.selectedTags.isEmpty ||
+                    Tags.selectedTags.any((selectedTag) => items[index].tags!.contains(selectedTag));
+
+                  if (shouldShowItem) {
+                    return InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (BuildContext context) {
+                            return FullText(event: items[index]);
+                          },
+                        ));
+                      },
+                      child: MyTimelineTile(
+                        items[index].id, 
+                        items[index].day,
+                        items[index].month, 
+                        items[index].year, 
+                        items[index].country, 
+                        items[index].eventName, 
+                        items[index].placement, 
+                        items[index].title, 
+                        items[index].tags, 
+                        items[index].content, 
+                        items[index].imagePath,
+                      ),
+                    );
+                  } else {
+                    return SizedBox.shrink(); 
+                  }
+                                
                 },
               );
             }
@@ -145,6 +159,8 @@ Future<void> writeLocalJson(String jsonData, String fileName) async {
     print('Error writing to local file: $e');
   }
 }
+
+
 
 
 Future<List<Events>>ReadJsonData() async{
@@ -341,6 +357,15 @@ class FullText extends StatelessWidget {
                   overflow: TextOverflow.visible,
                 ),
               ),
+
+              Text(
+                    event.tags ?? "",
+                    style: const TextStyle(
+                      fontSize: AppTextStyle.smallFontSize,
+                      color: AppColors.accentFontColor,
+                    ),
+                    overflow: TextOverflow.visible,
+                  ),
             ],
           ),
         ),
@@ -350,6 +375,11 @@ class FullText extends StatelessWidget {
 }
 
 class PopupDialog extends StatefulWidget {
+  final Function onDialogClose;
+
+  const PopupDialog({Key? key, required this.onDialogClose}) : super(key: key);
+
+
   @override
   _PopupDialog createState() => new _PopupDialog();
 }
@@ -388,6 +418,7 @@ class _PopupDialog extends State<PopupDialog> {
                           } else {
                             Tags.selectedTags.remove(tag);
                           }
+                          widget.onDialogClose();
                         });
                       }
                     );
@@ -396,8 +427,11 @@ class _PopupDialog extends State<PopupDialog> {
             ],
           );
         }
+        
       ),
+      
     );
+    
   }
 }
 

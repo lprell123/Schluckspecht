@@ -51,7 +51,7 @@ class _GetStartedState extends State<GetStarted> {
                         Navigator.push(
                           context, MaterialPageRoute(
                             builder: (context) {
-                              return Test();
+                              return OpenMainpage();
                            },   
                           ),
                         );
